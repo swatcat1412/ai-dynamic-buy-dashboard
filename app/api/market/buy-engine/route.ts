@@ -1,6 +1,3 @@
-Exit code: 0
-Wall time: 0.7 seconds
-Output:
 import { NextRequest, NextResponse } from "next/server";
 import { calculateBuyEngine } from "../../../lib/buy-engine";
 import { calculateIndicators } from "../../../lib/indicators";
@@ -25,4 +22,3 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : "Buy engine request failed" }, { status });
   }
 }
-
