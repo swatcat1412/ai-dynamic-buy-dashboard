@@ -301,3 +301,11 @@ Recheck ที่ต้องทำ:
 - ความปลอดภัย: ไม่มีการนำ API Key เข้า client code; key อยู่เฉพาะ Environment Variables ฝั่ง server/Render
 - สถานะรวม: Phase 0–7 เสร็จสำหรับ v1; ระบบเป็น decision support และไม่มีคำสั่งซื้ออัตโนมัติ
 - งานต่อยอดที่ยังไม่จำเป็นต่อ v1: ต่อ Fear & Greed provider, เพิ่มฐานข้อมูลสำหรับ checklist หลายผู้ใช้ และเพิ่ม automated test runner
+
+### 2026-08-06 — Phase 5 live deployment recheck
+
+- อัปโหลด Buy Engine source ขึ้น GitHub และ Render Auto-Deploy สำเร็จหลังแก้ไขรูปแบบไฟล์ที่ส่งครั้งแรก
+- Production smoke check: หน้าเว็บแสดง `Live decision support`, score, rule results, reasons และ live zone table
+- กรณีทดสอบจริง RKLB ราคาอยู่ในช่วงที่เอกสาร v1 ไม่ได้กำหนดไว้ ระบบแสดง `Zone unmapped` และ `WAIT` โดยไม่สร้างกติกาใหม่เอง
+- API quota ของ Twelve Data อาจทำให้บาง request แสดง error ชั่วคราว แต่หน้าเว็บยังแสดง loading/error state และไม่เปิดเผย API Key
+- สถานะ Deploy ปัจจุบัน: ผ่านและเปิดใช้งานที่ `https://ai-dynamic-buy-dashboard.onrender.com`
