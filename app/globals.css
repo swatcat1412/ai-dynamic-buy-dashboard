@@ -1,3 +1,6 @@
+Exit code: 0
+Wall time: 0.7 seconds
+Output:
 :root {
   --ink: #f5f7f4;
   --muted: #95a19a;
@@ -279,5 +282,29 @@ a { color: inherit; text-decoration: none; }
   .engine-row { grid-template-columns: 1fr 1.1fr 0.4fr; gap: 8px; }
   .checklist-layout { grid-template-columns: 1fr; }
   .checklist-list { padding: 6px 14px; }
+}
+
+/* Live Buy Engine */
+.engine-layout { display: none; }
+.engine-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin: 14px 0 12px; }
+.engine-toolbar label { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 11px; }
+.engine-toolbar select { border: 1px solid var(--line); border-radius: 6px; padding: 6px 9px; background: var(--surface); color: var(--ink); font: inherit; }
+.dynamic-engine-layout { display: grid; grid-template-columns: minmax(270px, 0.75fr) minmax(360px, 1.25fr); gap: 14px; margin-top: 14px; }
+.dynamic-engine-layout .engine-score-card, .dynamic-engine-layout .engine-list, .dynamic-zones { border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
+.dynamic-engine-layout .engine-score-card { padding: 26px; background: linear-gradient(145deg, #24352b, #17231e); }
+.engine-status.buy { color: var(--accent); }
+.engine-status.watch { color: #e7c36a; }
+.engine-status.wait { color: var(--muted); }
+.engine-reasons { display: grid; gap: 7px; margin: 16px 0 0; padding-left: 16px; color: var(--muted); font-size: 11px; line-height: 1.5; }
+.dynamic-zones { grid-column: 1 / -1; padding: 6px 20px; }
+.dynamic-zone-row { display: grid; grid-template-columns: 0.4fr 1fr 0.7fr 0.8fr; align-items: center; gap: 12px; min-height: 42px; border-bottom: 1px solid var(--line); color: var(--muted); font-size: 11px; }
+.dynamic-zone-row:last-child { border-bottom: 0; }
+.dynamic-zone-header { min-height: 32px; color: #65736b; font-size: 9px; letter-spacing: .1em; text-transform: uppercase; }
+.dynamic-zone-row strong { color: var(--ink); }
+.dynamic-zone-row.current { color: var(--accent-dark); background: rgba(182, 227, 109, .09); }
+.dynamic-zone-row.current strong { color: var(--accent); }
+@media (max-width: 800px) {
+  .dynamic-engine-layout { grid-template-columns: 1fr; }
+  .dynamic-zones { grid-column: auto; padding: 6px 14px; }
 }
 
