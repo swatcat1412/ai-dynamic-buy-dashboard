@@ -1,6 +1,3 @@
-Exit code: 0
-Wall time: 0.7 seconds
-Output:
 # AI Dynamic Buy Dashboard — Development Log
 
 เอกสารนี้ใช้เป็นบันทึกกลางของการพัฒนา เพื่อกู้บริบทได้หากประวัติการสนทนาหาย
@@ -304,4 +301,3 @@ Recheck ที่ต้องทำ:
 - ความปลอดภัย: ไม่มีการนำ API Key เข้า client code; key อยู่เฉพาะ Environment Variables ฝั่ง server/Render
 - สถานะรวม: Phase 0–7 เสร็จสำหรับ v1; ระบบเป็น decision support และไม่มีคำสั่งซื้ออัตโนมัติ
 - งานต่อยอดที่ยังไม่จำเป็นต่อ v1: ต่อ Fear & Greed provider, เพิ่มฐานข้อมูลสำหรับ checklist หลายผู้ใช้ และเพิ่ม automated test runner
-
