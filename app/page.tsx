@@ -1,7 +1,11 @@
+Exit code: 0
+Wall time: 0.7 seconds
+Output:
 import DailyChecklist from "./components/daily-checklist";
 import DataStatus from "./components/data-status";
 import LivePortfolio from "./components/live-portfolio";
 import LiveIndicators from "./components/live-indicators";
+import LiveBuyEngine from "./components/live-buy-engine";
 import LiveMacro from "./components/live-macro";
 import PriceHistory from "./components/price-history";
 
@@ -348,6 +352,8 @@ export default function Home() {
             ))}
           </div>
         </div>
+
+        <LiveBuyEngine />
 
         <div className="section-heading checklist-heading" id="checklist">
           <div>
