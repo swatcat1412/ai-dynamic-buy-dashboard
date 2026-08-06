@@ -1,6 +1,3 @@
-Exit code: 0
-Wall time: 0.7 seconds
-Output:
 import DailyChecklist from "./components/daily-checklist";
 import DataStatus from "./components/data-status";
 import LivePortfolio from "./components/live-portfolio";
@@ -371,4 +368,3 @@ export default function Home() {
     </main>
   );
 }
-
