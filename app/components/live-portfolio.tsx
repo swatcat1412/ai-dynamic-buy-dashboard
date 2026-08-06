@@ -1,0 +1,96 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+
+type Asset = { symbol: string; name: string; weight: number; tone: string };
+type Quote = { symbol: string; price: number; changePercent: number | null; currency: string };
+type HistoryBar = { time: string; close: number };
+
+const assets: Asset[] = [
+  { symbol: "RKLB", name: "Rocket Lab", weight: 20, tone: "lime" },
+  { symbol: "GOOGL", name: "Alphabet", weight: 35, tone: "warm" },
+  { symbol: "LLY", name: "Eli Lilly", weight: 15, tone: "blue" },
+  { symbol: "JEPQ", name: "JPMorgan Nasdaq Equity Premium", weight: 30, tone: "violet" },
+];
+
+export default function LivePortfolio() {
+  const [quotes, setQuotes] = useState<Quote[]>([]);
+  const [history, setHistory] = useState<HistoryBar[]>([]);
+  const [selectedSymbol, setSelectedSymbol] = useState("RKLB");
+  const [state, setState] = useState("loading");
+  const [message, setMessage] = useState("");
+  const quoteMap = useMemo(() => new Map(quotes.map((quote) => [quote.symbol, quote])), [quotes]);
+  const selectedHistory = history[history.length - 1];
+
+  useEffect(() => {
+    let cancelled = false;
+    async function loadQuotes() {
+      try {
+        const statusResponse = await fetch("/api/market/status", { cache: "no-store" });
+        const status = await statusResponse.json() as { hasApiKey?: boolean };
+        if (!status.hasApiKey) {
+          if (!cancelled) { setState("fallback"); setMessage("Add TWELVE_DATA_API_KEY to enable live quotes."); }
+          return;
+        }
+        const response = await fetch("/api/market/quotes", { cache: "no-store" });
+        const payload = await response.json() as { ok?: boolean; quotes?: Quote[]; error?: string };
+        if (!response.ok || !payload.ok || !payload.quotes) throw new Error(payload.error || "Quote request failed");
+        if (!cancelled) { setQuotes(payload.quotes); setState("connected"); setMessage(""); }
+      } catch (error) {
+        if (!cancelled) { setState("error"); setMessage(error instanceof Error ? error.message : "Live quote request failed"); }
+      }
+    }
+    void loadQuotes();
+    return () => { cancelled = true; };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function loadHistory() {
+      setHistory([]);
+      try {
+        const response = await fetch(`/api/market/history?symbol=${selectedSymbol}`, { cache: "no-store" });
+        const payload = await response.json() as { ok?: boolean; history?: HistoryBar[] };
+        if (!response.ok || !payload.ok || !payload.history) return;
+        if (!cancelled) setHistory(payload.history);
+      } catch { if (!cancelled) setHistory([]); }
+    }
+    void loadHistory();
+    return () => { cancelled = true; };
+  }, [selectedSymbol]);
+
+  const stateLabel = state === "connected" ? "Live quotes connected" : state === "loading" ? "Connecting to live data" : state === "fallback" ? "Static data mode" : "Live data unavailable";
+
+  return (
+    <>
+      <div className="portfolio-live-toolbar">
+        <span className={`live-state ${state}`}><i className="status-dot" />{stateLabel}</span>
+        <span className="muted">Quotes refresh from the server-side provider</span>
+      </div>
+      <div className="portfolio-layout">
+        <article className="portfolio-summary">
+          <div className="summary-topline"><span className="summary-label">Target allocation</span><span className="summary-status"><span className="status-dot" /> Balanced</span></div>
+          <div className="allocation-total">100<span>%</span></div>
+          <p>Target weights remain from Markdown v1.0 while live prices are loaded from the configured market-data provider.</p>
+          <div className="allocation-stack" aria-label="Portfolio allocation breakdown">{assets.map((asset) => <span className={`allocation-segment ${asset.tone}`} key={asset.symbol} style={{ width: `${asset.weight}%` }} />)}</div>
+          <div className="allocation-legend">{assets.map((asset) => <span key={asset.symbol}><i className={`legend-dot ${asset.tone}`} />{asset.symbol}</span>)}</div>
+          <div className="history-preview">
+            <div className="summary-topline"><span>Historical data</span><select aria-label="Select symbol history" value={selectedSymbol} onChange={(event) => setSelectedSymbol(event.target.value)}>{assets.map((asset) => <option key={asset.symbol}>{asset.symbol}</option>)}</select></div>
+            <strong>{history.length ? `${history.length} daily bars loaded` : "Waiting for history"}</strong>
+            <span>{selectedHistory ? `Latest close ${selectedHistory.close.toFixed(2)} · ${selectedHistory.time}` : "Select a symbol to check /history"}</span>
+          </div>
+        </article>
+        <div className="portfolio-table" role="table" aria-label="Portfolio allocation and live quotes">
+          <div className="portfolio-row portfolio-header" role="row"><span>Symbol</span><span>Asset / Live price</span><span>Weight</span></div>
+          {assets.map((asset, index) => {
+            const quote = quoteMap.get(asset.symbol);
+            const change = quote?.changePercent;
+            return <div className="portfolio-row" role="row" key={asset.symbol}><span className="symbol-cell"><i className={`legend-dot ${asset.tone}`} />{asset.symbol}</span><span className="asset-name"><strong>{quote ? new Intl.NumberFormat("en-US", { style: "currency", currency: quote.currency || "USD" }).format(quote.price) : "—"}</strong><small className={change !== undefined && change !== null && change >= 0 ? "positive" : "caution"}>{change === null || change === undefined ? "No quote" : `${change >= 0 ? "+" : ""}${change.toFixed(2)}% today`}</small></span><span className="weight-cell"><strong>{asset.weight}%</strong><small>0{index + 1}</small></span></div>;
+          })}
+        </div>
+      </div>
+      <div className="foundation-note"><span>Data mode</span><p>{message || (state === "connected" ? "Live quote and historical endpoints are connected. Other sections remain static until later phases." : "Portfolio target allocation is static until live data is available.")}</p></div>
+    </>
+  );
+}
+
