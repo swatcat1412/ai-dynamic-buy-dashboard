@@ -1,3 +1,6 @@
+Exit code: 0
+Wall time: 0.7 seconds
+Output:
 # AI Dynamic Buy Dashboard — Development Log
 
 เอกสารนี้ใช้เป็นบันทึกกลางของการพัฒนา เพื่อกู้บริบทได้หากประวัติการสนทนาหาย
@@ -245,6 +248,18 @@ Recheck ที่ต้องทำ:
 - เพิ่ม `.env.local`, `.env.*`, `.next-build/` และ `tsconfig.tsbuildinfo` ใน `.gitignore`
 - ห้ามส่ง API Key ผ่าน source code หรือไฟล์ที่อัปโหลด; ให้กรอกเป็น Environment Variables ใน Render เท่านั้น
 - สถานะ: รอผู้ใช้ Sign in ที่ Render เพื่อเข้าถึง project และตรวจ service/deploy settings
+
+### 2026-08-06 — First Render deployment
+
+- GitHub repository: `swatcat1412/ai-dynamic-buy-dashboard` (Private)
+- Render service: `ai-dynamic-buy-dashboard`
+- Instance: Free ($0/month); free instance อาจ sleep เมื่อไม่มีการใช้งาน
+- Build command: `npm install; npm run build`
+- Start command: `npm run start`
+- Environment Variables: `TWELVE_DATA_API_KEY`, `FRED_API_KEY` ถูกตั้งใน Render แบบ masked
+- ผล Deploy: Build successful และ service เริ่มทำงานสำเร็จ
+- Public URL: `https://ai-dynamic-buy-dashboard.onrender.com`
+- Smoke check: หน้า Dashboard เปิดได้, quotes, FRED macro, indicators, historical chart และ checklist แสดงผล
 - ผล Recheck: `npm.cmd run lint` ผ่าน, `npx.cmd tsc --noEmit` ผ่าน และ `npm.cmd run build` ผ่าน
 - สถานะ Phase 3: เสร็จสมบูรณ์
 - หมายเหตุ: Buy Engine และการตีความสัญญาณซื้อยังอยู่ใน Phase 5; Phase นี้ทำเฉพาะการคำนวณและแสดง indicators
@@ -269,4 +284,13 @@ Recheck ที่ต้องทำ:
 - ผล Recheck: ผ่าน / ผ่านบางส่วน / ยังไม่ผ่าน
 - ปัญหาที่พบ:
 - งานถัดไป:
+
+## สถานะปัจจุบันหลัง Deploy
+
+- GitHub: อัปโหลด source code แล้วที่ `swatcat1412/ai-dynamic-buy-dashboard` (Private)
+- Render: Service `ai-dynamic-buy-dashboard` เปิดใช้งานที่ `https://ai-dynamic-buy-dashboard.onrender.com`
+- Recheck ล่าสุด: lint, typecheck, production build และ smoke check บนหน้าเว็บผ่าน
+- ข้อมูลที่ตรวจพบ: live quotes, FRED macro, indicators, historical chart และ daily checklist โหลดได้
+- ความปลอดภัย: API Keys ไม่อยู่ใน GitHub และถูกเก็บเป็น masked Environment Variables ใน Render
+- แผนถัดไป: Phase 5 — Buy Engine / สรุปสัญญาณซื้อแบบมีเหตุผลและตรวจสอบได้
 
