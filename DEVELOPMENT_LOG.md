@@ -107,7 +107,7 @@ Recheck ที่ต้องทำ:
 
 ### Phase 5 — Buy Engine และ Dynamic Buy Zone
 
-สถานะ: กติกาเบื้องต้นอยู่ใน Markdown แต่ยังไม่ได้ทำเป็น engine จริง
+สถานะ: เสร็จสมบูรณ์
 
 - แปลงกติกา RSI, MACD, Volume, Fear & Greed, VIX และ Support เป็น scoring function
 - คำนวณคะแนนรวมและระดับความมั่นใจ
@@ -125,7 +125,7 @@ Recheck ที่ต้องทำ:
 
 ### Phase 6 — กราฟ ประวัติ และ Daily Workflow
 
-สถานะ: ยังไม่เริ่ม
+สถานะ: เสร็จสมบูรณ์
 
 - กราฟราคาและ indicator ย้อนหลัง
 - บันทึก Daily Checklist แต่ละวัน
@@ -141,7 +141,7 @@ Recheck ที่ต้องทำ:
 
 ### Phase 7 — QA, ความปลอดภัย และเตรียมใช้งานจริง
 
-สถานะ: ยังไม่เริ่ม
+สถานะ: เสร็จสมบูรณ์สำหรับ v1
 
 - ตรวจ TypeScript, lint และ production build
 - ตรวจ loading/error/empty state
@@ -292,5 +292,16 @@ Recheck ที่ต้องทำ:
 - Recheck ล่าสุด: lint, typecheck, production build และ smoke check บนหน้าเว็บผ่าน
 - ข้อมูลที่ตรวจพบ: live quotes, FRED macro, indicators, historical chart และ daily checklist โหลดได้
 - ความปลอดภัย: API Keys ไม่อยู่ใน GitHub และถูกเก็บเป็น masked Environment Variables ใน Render
-- แผนถัดไป: Phase 5 — Buy Engine / สรุปสัญญาณซื้อแบบมีเหตุผลและตรวจสอบได้
+- สถานะงานหลัก: ปิดครบทุก Phase สำหรับ v1 แล้ว
+
+### 2026-08-06 — ปิดงานทุก Phase สำหรับ v1
+
+- Phase 5: เพิ่ม `app/lib/buy-engine.ts`, `/api/market/buy-engine` และ `app/components/live-buy-engine.tsx`
+- Buy Engine ใช้ราคาปัจจุบัน, Indicators และ VIX จาก FRED เพื่อคำนวณคะแนน, Zone, BUY/WATCH/WAIT และเหตุผล
+- Fear & Greed ยังแสดงเป็น Unavailable เพราะยังไม่มี provider ที่กำหนดในระบบ จึงไม่ให้คะแนนแทน
+- Phase 6: history chart, range 60/120/260, daily checklist และ manual decision ถูกตรวจสอบแล้ว
+- Phase 7 Recheck: `npm.cmd run lint` ผ่าน, `npx.cmd tsc --noEmit` ผ่าน, `npm.cmd run build` ผ่าน และ production smoke check หน้า `/` กับ `/api/market/status` ผ่าน
+- ความปลอดภัย: ไม่มีการนำ API Key เข้า client code; key อยู่เฉพาะ Environment Variables ฝั่ง server/Render
+- สถานะรวม: Phase 0–7 เสร็จสำหรับ v1; ระบบเป็น decision support และไม่มีคำสั่งซื้ออัตโนมัติ
+- งานต่อยอดที่ยังไม่จำเป็นต่อ v1: ต่อ Fear & Greed provider, เพิ่มฐานข้อมูลสำหรับ checklist หลายผู้ใช้ และเพิ่ม automated test runner
 
