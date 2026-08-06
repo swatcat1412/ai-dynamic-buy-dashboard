@@ -1,6 +1,3 @@
-Exit code: 0
-Wall time: 0.7 seconds
-Output:
 import type { IndicatorSnapshot } from "./indicators";
 import type { MacroSnapshot } from "./macro-data";
 import type { PortfolioSymbol } from "./market-data";
@@ -77,4 +74,3 @@ export function calculateBuyEngine(symbol: PortfolioSymbol, price: number, indic
   if (!reasons.length) reasons.push("No buy rule is currently triggered");
   return { symbol, price, currentZone, score, maximum: 100, confidence: Math.round(score), action, dataAvailable, rules, zones: getZoneDefinitions(symbol), reasons };
 }
-
