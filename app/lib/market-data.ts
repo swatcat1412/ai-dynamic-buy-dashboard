@@ -71,36 +71,61 @@ export class MarketDataError extends Error {
   }
 }
 
+type TwelveDataQuotePayload = TwelveDataQuote | Record<string, TwelveDataQuote>;
+
+const requestCache = new Map<string, { expiresAt: number; value: Promise<unknown> }>();
+const REQUEST_CACHE_TTL_MS = 15 * 60 * 1000;
+
 async function twelveDataRequest<T>(path: string, params: Record<string, string>) {
   const apiKey = process.env.TWELVE_DATA_API_KEY;
   if (!apiKey) {
     throw new MarketDataError("TWELVE_DATA_API_KEY is not configured", 503);
   }
 
-  const url = new URL(`${TWELVE_DATA_URL}${path}`);
-  Object.entries(params).forEach(([key, value]) => url.searchParams.set(key, value));
+  const cacheKey = `${path}?${Object.entries(params).sort(([a], [b]) => a.localeCompare(b)).map(([key, value]) => `${key}=${value}`).join("&")}`;
+  const cached = requestCache.get(cacheKey);
+  if (cached && cached.expiresAt > Date.now()) return cached.value as Promise<T>;
 
-  const response = await fetch(url, {
-    headers: { Authorization: `apikey ${apiKey}` },
-    next: { revalidate: 900 },
-  });
+  const value = (async () => {
+    const url = new URL(`${TWELVE_DATA_URL}${path}`);
+    Object.entries(params).forEach(([key, value]) => url.searchParams.set(key, value));
 
-  const payload = (await response.json()) as T & { status?: string; message?: string };
-  if (!response.ok || payload.status === "error") {
-    throw new MarketDataError(payload.message || `Twelve Data request failed (${response.status})`, response.status);
+    const response = await fetch(url, {
+      headers: { Authorization: `apikey ${apiKey}` },
+      next: { revalidate: 900 },
+    });
+
+    const payload = (await response.json()) as T & { status?: string; message?: string };
+    if (!response.ok || payload.status === "error") {
+      throw new MarketDataError(payload.message || `Twelve Data request failed (${response.status})`, response.status);
+    }
+
+    return payload;
+  })();
+
+  requestCache.set(cacheKey, { expiresAt: Date.now() + REQUEST_CACHE_TTL_MS, value });
+  try {
+    return await value;
+  } catch (error) {
+    requestCache.delete(cacheKey);
+    throw error;
   }
-
-  return payload;
 }
 
 export class TwelveDataProvider implements MarketDataProvider {
   async getQuotes(symbols: readonly PortfolioSymbol[]): Promise<QuoteSnapshot[]> {
-    return Promise.all(symbols.map(async (symbol) => {
-      const quote = await twelveDataRequest<TwelveDataQuote>("/quote", { symbol });
+    const requested = new Set(symbols);
+    const payload = await twelveDataRequest<TwelveDataQuotePayload>("/quote", {
+      symbol: portfolioSymbols.join(","),
+    });
+    const records = portfolioSymbols.map((symbol) => {
+      const quote = "close" in payload || "price" in payload
+        ? payload as TwelveDataQuote
+        : (payload as Record<string, TwelveDataQuote>)[symbol];
+      if (!quote || !requested.has(symbol)) return null;
+
       const price = Number(quote.close ?? quote.price);
-      if (!Number.isFinite(price)) {
-        throw new MarketDataError(`No valid price returned for ${symbol}`);
-      }
+      if (!Number.isFinite(price)) return null;
 
       return {
         symbol,
@@ -110,7 +135,8 @@ export class TwelveDataProvider implements MarketDataProvider {
         currency: quote.currency || "USD",
         asOf: quote.datetime || new Date().toISOString(),
       };
-    }));
+    });
+    return records.filter((quote): quote is QuoteSnapshot => quote !== null);
   }
 
   async getHistory(symbol: PortfolioSymbol, outputSize = 120): Promise<OhlcvBar[]> {
@@ -141,3 +167,4 @@ export function createMarketDataProvider(): MarketDataProvider {
   throw new MarketDataError("No live market data provider is configured", 503);
 }
 
+// จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ Claude AI · © 2026 Thiti Theadphitukphong · All Rights Reserved.
