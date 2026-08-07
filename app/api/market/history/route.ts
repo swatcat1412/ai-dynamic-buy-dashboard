@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
 
   try {
     const requestedRange = Number(request.nextUrl.searchParams.get("range"));
-    const outputSize = [60, 120, 260].includes(requestedRange) ? requestedRange : 120;
+    const outputSize = [5, 20, 60, 120].includes(requestedRange) ? requestedRange : 120;
     const provider = createMarketDataProvider();
     const history = await provider.getHistory(symbol, outputSize);
     return NextResponse.json({ ok: true, symbol, history });
@@ -24,3 +24,4 @@ export async function GET(request: NextRequest) {
   }
 }
 
+// จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ Claude AI · © 2026 Thiti Theadphitukphong · All Rights Reserved.
