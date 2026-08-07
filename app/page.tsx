@@ -1,4 +1,3 @@
-import DailyChecklist from "./components/daily-checklist";
 import DataStatus from "./components/data-status";
 import LivePortfolio from "./components/live-portfolio";
 import LiveIndicators from "./components/live-indicators";
@@ -7,11 +6,10 @@ import LiveMacro from "./components/live-macro";
 import PriceHistory from "./components/price-history";
 
 const navigation = [
-  "Overview",
-  "Market Score",
-  "Buy Zones",
-  "Indicators",
-  "Checklist",
+  { label: "Overview", href: "#overview" },
+  { label: "Market Score", href: "#market-score" },
+  { label: "Buy Zones", href: "#buy-zones" },
+  { label: "Indicators", href: "#technical-indicators" },
 ];
 
 const portfolio = [
@@ -122,9 +120,9 @@ export default function Home() {
 
         <nav className="nav-list">
           {navigation.map((item, index) => (
-            <a className={index === 0 ? "nav-item active" : "nav-item"} href={index === 0 ? "#overview" : index === 1 ? "#market-score" : index === 2 ? "#buy-zones" : index === 3 ? "#technical-indicators" : "#checklist"} key={item}>
+            <a className={index === 0 ? "nav-item active" : "nav-item"} href={item.href} key={item.label}>
               <span className="nav-index">0{index + 1}</span>
-              {item}
+              {item.label}
             </a>
           ))}
         </nav>
@@ -352,19 +350,12 @@ export default function Home() {
 
         <LiveBuyEngine />
 
-        <div className="section-heading checklist-heading" id="checklist">
-          <div>
-            <p className="section-kicker">Phase 6 · Daily routine</p>
-            <h3>Daily checklist</h3>
-          </div>
-          <span className="pill">8 checks · Interactive</span>
-        </div>
-
         <div className="section-heading history-heading" id="price-history"><div><p className="section-kicker">Phase 6 · History</p><h3>Price history</h3></div><span className="pill">Live OHLCV · EMA20</span></div>
         <PriceHistory />
 
-        <DailyChecklist />
       </section>
     </main>
   );
 }
+
+// จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ Claude AI · © 2026 Thiti Theadphitukphong · All Rights Reserved.
