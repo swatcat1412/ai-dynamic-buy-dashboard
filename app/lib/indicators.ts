@@ -21,6 +21,10 @@ export type IndicatorSnapshot = {
   adx14: number | null;
   obv: number | null;
   obvChangePercent: number | null;
+  support20: number | null;
+  resistance20: number | null;
+  support60: number | null;
+  resistance60: number | null;
 };
 
 function average(values: number[]) {
@@ -122,6 +126,10 @@ export function calculateIndicators(symbol: string, bars: OhlcvBar[]): Indicator
   const ema200 = ema(closes, 200);
   const emaTrend = ema20 === null || ema50 === null || ema200 === null ? "insufficient-data" : ema20 > ema50 && ema50 > ema200 ? "bullish-stack" : ema20 < ema50 && ema50 < ema200 ? "bearish-stack" : "mixed";
   const latestClose = closes.at(-1) ?? null;
+  const lows20 = bars.slice(-20).map((bar) => bar.low);
+  const highs20 = bars.slice(-20).map((bar) => bar.high);
+  const lows60 = bars.slice(-60).map((bar) => bar.low);
+  const highs60 = bars.slice(-60).map((bar) => bar.high);
   const atr14 = calculateAtr(bars);
   const obvValues = [0];
   for (let index = 1; index < bars.length; index += 1) obvValues.push(obvValues[index - 1] + (bars[index].close > bars[index - 1].close ? bars[index].volume : bars[index].close < bars[index - 1].close ? -bars[index].volume : 0));
@@ -148,6 +156,11 @@ export function calculateIndicators(symbol: string, bars: OhlcvBar[]): Indicator
     adx14: calculateAdx(bars),
     obv,
     obvChangePercent: previousObv ? ((obv! - previousObv) / Math.abs(previousObv)) * 100 : null,
+    support20: lows20.length >= 5 ? Math.min(...lows20) : null,
+    resistance20: highs20.length >= 5 ? Math.max(...highs20) : null,
+    support60: lows60.length >= 20 ? Math.min(...lows60) : null,
+    resistance60: highs60.length >= 20 ? Math.max(...highs60) : null,
   };
 }
 
+// จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ Claude AI · © 2026 Thiti Theadphitukphong · All Rights Reserved.
