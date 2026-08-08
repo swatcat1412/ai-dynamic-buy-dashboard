@@ -129,7 +129,7 @@ export default function Home() {
 
         <div className="sidebar-footer">
           <span className="status-dot" />
-          <span>Static data mode</span>
+          <span>Daily data mode</span>
         </div>
       </aside>
 
