@@ -107,7 +107,7 @@ export default function PriceHistory() {
         <label>Symbol <select value={symbol} onChange={(event) => setSymbol(event.target.value)}>{symbols.map((item) => <option key={item}>{item}</option>)}</select></label>
         <label>Range <select value={range} onChange={(event) => setRange(event.target.value)}>
           <option value="5">5 days</option>
-          <option value="20">20 days</option>
+          <option value="30">30 days · 1 month</option>
           <option value="60">60 days</option>
           <option value="120">120 days</option>
         </select></label>
