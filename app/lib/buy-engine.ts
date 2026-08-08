@@ -63,8 +63,8 @@ function getDynamicLevels(price: number, indicators: IndicatorSnapshot) {
   };
 }
 
-function getDynamicZoneDefinitions(symbol: PortfolioSymbol, price: number, indicators: IndicatorSnapshot[]) {
-  const levels = getDynamicLevels(price, indicators[0]);
+function getDynamicZoneDefinitions(symbol: PortfolioSymbol, price: number, indicators: IndicatorSnapshot) {
+  const levels = getDynamicLevels(price, indicators);
   return [
     { zone: "A" as const, min: price, max: null, allocation: "—", action: "WAIT" as const, range: `>${price.toFixed(2)}` },
     { zone: "B" as const, min: levels.first, max: price, allocation: "20%", action: "ACCUMULATE" as const, range: `${levels.first.toFixed(2)}–${price.toFixed(2)}` },
@@ -79,7 +79,8 @@ export function getZoneDefinitions(symbol: PortfolioSymbol) {
 }
 export function calculateBuyEngine(symbol: PortfolioSymbol, price: number, indicators: IndicatorSnapshot, macro: MacroSnapshot[]) {
   const vix = macro.find((item) => item.key === "vix");
-  const dynamicZones = getDynamicZoneDefinitions(symbol, price, [indicators]);
+  const levels = getDynamicLevels(price, indicators);
+  const dynamicZones = getDynamicZoneDefinitions(symbol, price, indicators);
   const currentZone = dynamicZones.find((zone) => inZone(price, zone))?.zone ?? "unmapped";
   const rules: RuleResult[] = [
     { key: "rsi", rule: "RSI <35", signal: indicators.rsi14 !== null && indicators.rsi14 < 35 ? "Triggered" : "Not triggered", points: indicators.rsi14 !== null && indicators.rsi14 < 35 ? 20 : 0, maximum: 20, tone: indicators.rsi14 !== null && indicators.rsi14 < 35 ? "positive" : "neutral", reason: indicators.rsi14 !== null && indicators.rsi14 < 35 ? "RSI is in oversold territory" : "RSI is not below 35" },
