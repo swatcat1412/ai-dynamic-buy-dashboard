@@ -59,13 +59,13 @@ export default function LivePortfolio() {
     return () => { cancelled = true; };
   }, [selectedSymbol]);
 
-  const stateLabel = state === "connected" ? "Live quotes connected" : state === "loading" ? "Connecting to live data" : state === "fallback" ? "Static data mode" : "Live data unavailable";
+  const stateLabel = state === "connected" ? "Daily prices connected" : state === "loading" ? "Loading daily prices" : state === "fallback" ? "Static data mode" : "Daily price data unavailable";
 
   return (
     <>
       <div className="portfolio-live-toolbar">
         <span className={`live-state ${state}`}><i className="status-dot" />{stateLabel}</span>
-        <span className="muted">Quotes refresh from the server-side provider</span>
+        <span className="muted">Daily closes · cached once per day</span>
       </div>
       <div className="portfolio-layout">
         <article className="portfolio-summary">
@@ -89,8 +89,9 @@ export default function LivePortfolio() {
           })}
         </div>
       </div>
-      <div className="foundation-note"><span>Data mode</span><p>{message || (state === "connected" ? "Live quote and historical endpoints are connected. Other sections remain static until later phases." : "Portfolio target allocation is static until live data is available.")}</p></div>
+      <div className="foundation-note"><span>Data mode</span><p>{message || (state === "connected" ? "Daily closing prices and historical data are connected. Other sections remain static until later phases." : "Portfolio target allocation is static until daily data is available.")}</p></div>
     </>
   );
 }
 
+// จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ Claude AI · © 2026 Thiti Theadphitukphong · All Rights Reserved.
