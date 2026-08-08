@@ -79,7 +79,8 @@ export function getZoneDefinitions(symbol: PortfolioSymbol) {
 }
 export function calculateBuyEngine(symbol: PortfolioSymbol, price: number, indicators: IndicatorSnapshot, macro: MacroSnapshot[]) {
   const vix = macro.find((item) => item.key === "vix");
-  const currentZone = zoneDefinitions[symbol].find((zone) => inZone(price, zone))?.zone ?? "unmapped";
+  const dynamicZones = getDynamicZoneDefinitions(symbol, price, [indicators]);
+  const currentZone = dynamicZones.find((zone) => inZone(price, zone))?.zone ?? "unmapped";
   const rules: RuleResult[] = [
     { key: "rsi", rule: "RSI <35", signal: indicators.rsi14 !== null && indicators.rsi14 < 35 ? "Triggered" : "Not triggered", points: indicators.rsi14 !== null && indicators.rsi14 < 35 ? 20 : 0, maximum: 20, tone: indicators.rsi14 !== null && indicators.rsi14 < 35 ? "positive" : "neutral", reason: indicators.rsi14 !== null && indicators.rsi14 < 35 ? "RSI is in oversold territory" : "RSI is not below 35" },
     { key: "macd", rule: "MACD Golden Cross", signal: indicators.macdTrend === "golden-cross" ? "Triggered" : "Not triggered", points: indicators.macdTrend === "golden-cross" ? 20 : 0, maximum: 20, tone: indicators.macdTrend === "golden-cross" ? "positive" : "neutral", reason: indicators.macdTrend === "golden-cross" ? "MACD crossed above its signal" : "No fresh bullish MACD cross" },
@@ -92,8 +93,7 @@ export function calculateBuyEngine(symbol: PortfolioSymbol, price: number, indic
   const dataAvailable = indicators.rsi14 !== null && indicators.ema20 !== null;
   const action: BuyAction = !dataAvailable || currentZone === "A" ? "WAIT" : score >= 60 ? "ACCUMULATE" : score >= 30 ? "WATCH" : "WAIT";
   const round = (value: number | null) => value === null ? null : Number(value.toFixed(2));
-  const levels = getDynamicLevels(price, indicators);
-  const firstEntry = levels.first;
+  const firstEntry = getDynamicLevels(price, indicators).first;
   const secondEntry = levels.second;
   const thirdEntry = levels.third;
   const entryLevels = [
@@ -106,7 +106,7 @@ export function calculateBuyEngine(symbol: PortfolioSymbol, price: number, indic
   if (currentZone === "A") reasons.unshift("Current price is above the defined accumulation range");
   if (indicators.support20 !== null) reasons.push(`20-day support is ${indicators.support20.toFixed(2)}`);
   if (!reasons.length) reasons.push("No accumulation rule is currently triggered");
-  return { symbol, price, currentZone, score, maximum: 100, confidence: Math.round(score), action, dataAvailable, preferredEntry, entryLevels, support20: indicators.support20, resistance20: indicators.resistance20, support60: indicators.support60, resistance60: indicators.resistance60, rules, zones: getDynamicZoneDefinitions(symbol, price, [indicators]), reasons };
+  return { symbol, price, currentZone, score, maximum: 100, confidence: Math.round(score), action, dataAvailable, preferredEntry, entryLevels, support20: indicators.support20, resistance20: indicators.resistance20, support60: indicators.support60, resistance60: indicators.resistance60, rules, zones: dynamicZones, reasons };
 }
 
 // จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ Claude AI · © 2026 Thiti Theadphitukphong · All Rights Reserved.
