@@ -308,3 +308,10 @@ a { color: inherit; text-decoration: none; }
 .chart-price-label { fill: var(--muted); font-size: 10px; font-variant-numeric: tabular-nums; }
 
 /* จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ Claude AI · © 2026 Thiti Theadphitukphong · All Rights Reserved. */
+.entry-levels { display: grid; gap: 7px; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); color: var(--muted); font-size: 11px; }
+.entry-levels > strong { color: var(--accent); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; }
+.entry-levels span { display: flex; justify-content: space-between; gap: 10px; }
+.entry-levels b { color: var(--ink); font-weight: 600; }
+.engine-status.accumulate { color: var(--accent); }
+
+/* จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ Claude AI · © 2026 Thiti Theadphitukphong · All Rights Reserved. */
