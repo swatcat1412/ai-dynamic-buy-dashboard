@@ -283,7 +283,7 @@ export default function Home() {
 
         <LiveBuyEngine />
 
-        <div className="section-heading history-heading" id="price-history"><div><p className="section-kicker">Phase 6 · History</p><h3>Price history</h3></div><span className="pill">Live OHLCV · EMA20</span></div>
+        <div className="section-heading history-heading" id="price-history"><div><p className="section-kicker">Phase 6 · History</p><h3>Price history</h3></div><span className="pill">Daily OHLCV · EMA20</span></div>
         <PriceHistory />
 
       </section>
