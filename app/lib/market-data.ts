@@ -74,7 +74,7 @@ export class MarketDataError extends Error {
 type TwelveDataQuotePayload = TwelveDataQuote | Record<string, TwelveDataQuote>;
 
 const requestCache = new Map<string, { expiresAt: number; value: Promise<unknown> }>();
-const REQUEST_CACHE_TTL_MS = 15 * 60 * 1000;
+const REQUEST_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 
 async function twelveDataRequest<T>(path: string, params: Record<string, string>) {
   const apiKey = process.env.TWELVE_DATA_API_KEY;
@@ -114,31 +114,23 @@ async function twelveDataRequest<T>(path: string, params: Record<string, string>
 
 export class TwelveDataProvider implements MarketDataProvider {
   async getQuotes(symbols: readonly PortfolioSymbol[]): Promise<QuoteSnapshot[]> {
-    const requested = new Set(symbols);
-    const payload = await twelveDataRequest<TwelveDataQuotePayload>("/quote", {
-      symbol: portfolioSymbols.join(","),
-    });
-    const records = portfolioSymbols.map((symbol) => {
-      const quote = "close" in payload || "price" in payload
-        ? payload as TwelveDataQuote
-        : (payload as Record<string, TwelveDataQuote>)[symbol];
-      if (!quote || !requested.has(symbol)) return null;
-
-      const price = Number(quote.close ?? quote.price);
-      if (!Number.isFinite(price)) return null;
+    const snapshots = await Promise.all(symbols.map(async (symbol) => {
+      const bars = await this.getHistory(symbol, 260);
+      const latest = bars.at(-1);
+      const previous = bars.at(-2);
+      if (!latest) return null;
 
       return {
         symbol,
-        price,
-        change: quote.change ? Number(quote.change) : null,
-        changePercent: quote.percent_change ? Number(quote.percent_change) : null,
-        currency: quote.currency || "USD",
-        asOf: quote.datetime || new Date().toISOString(),
+        price: latest.close,
+        change: previous ? latest.close - previous.close : null,
+        changePercent: previous?.close ? ((latest.close - previous.close) / previous.close) * 100 : null,
+        currency: "USD",
+        asOf: latest.time,
       };
-    });
-    return records.filter((quote): quote is QuoteSnapshot => quote !== null);
+    }));
+    return snapshots.filter((quote): quote is QuoteSnapshot => quote !== null);
   }
-
   async getHistory(symbol: PortfolioSymbol, outputSize = 120): Promise<OhlcvBar[]> {
     const series = await twelveDataRequest<TwelveDataTimeSeries>("/time_series", {
       symbol,
