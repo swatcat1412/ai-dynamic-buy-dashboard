@@ -25,7 +25,7 @@ export default function LiveBuyEngine() {
   }, [symbol]);
 
   return <>
-    <div className="engine-toolbar"><span className={`live-state ${state}`}><i className="status-dot" />{state === "connected" ? "Live decision support" : state === "loading" ? "Evaluating buy rules" : "Buy engine unavailable"}</span><label>Symbol <select value={symbol} onChange={(event) => setSymbol(event.target.value)}>{symbols.map((item) => <option key={item}>{item}</option>)}</select></label></div>
+    <div className="engine-toolbar"><span className={`live-state ${state}`}><i className="status-dot" />{state === "connected" ? "Daily price assessment" : state === "loading" ? "Evaluating daily price" : "Daily assessment unavailable"}</span><label>Symbol <select value={symbol} onChange={(event) => setSymbol(event.target.value)}>{symbols.map((item) => <option key={item}>{item}</option>)}</select></label></div>
     {message ? <div className="indicator-message">{message}</div> : engine ? <div className="dynamic-engine-layout">
       <article className="engine-score-card"><div className="score-card-header"><span>{engine.symbol} buy engine</span><span className="score-date">LIVE</span></div><div className="engine-score">{engine.score}<span>/100</span></div><p>Last price <strong>${engine.price.toFixed(2)}</strong> · Zone <strong>{engine.currentZone}</strong></p><div className="score-meter"><span style={{ width: `${engine.score}%` }} /></div><div className={`engine-status ${engine.action.toLowerCase()}`}>{engine.action} · {engine.confidence}% confidence</div><ul className="engine-reasons">{engine.reasons.map((reason) => <li key={reason}>{reason}</li>)}</ul></article>
       <div className="engine-list" role="list" aria-label={`${symbol} buy engine rules`}><div className="engine-row engine-header"><span>Rule</span><span>Signal</span><span>Points</span></div>{engine.rules.map((rule) => <div className="engine-row" role="listitem" key={rule.key}><span className="engine-rule">{rule.rule}</span><span className={`engine-signal ${rule.tone}`}><i className={`status-dot ${rule.tone}`} />{rule.signal}</span><strong>{rule.points}<small>/{rule.maximum}</small></strong></div>)}</div>
@@ -33,3 +33,5 @@ export default function LiveBuyEngine() {
     </div> : null}
   </>;
 }
+
+// จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ Claude AI · © 2026 Thiti Theadphitukphong · All Rights Reserved.
