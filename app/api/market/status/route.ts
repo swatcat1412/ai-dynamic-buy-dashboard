@@ -8,10 +8,11 @@ export async function GET() {
   return NextResponse.json({
     ok: true,
     mode: provider.hasApiKey ? "api-ready" : dashboardDataStatus.mode,
-    provider: provider.provider,
+    provider: provider.provider === "twelve-data" ? "twelve-data · daily" : provider.provider,
     hasApiKey: provider.hasApiKey,
     liveDataAvailable: provider.hasApiKey,
     lastUpdated: dashboardDataStatus.lastUpdated,
   });
 }
 
+// จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ Claude AI · © 2026 Thiti Theadphitukphong · All Rights Reserved.
