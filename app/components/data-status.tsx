@@ -23,9 +23,10 @@ export default function DataStatus() {
       <div className="data-status-items">
         <span>Source <strong>{status.provider}</strong></span>
         <span>Snapshot <strong>{status.lastUpdated}</strong></span>
-        <span className="live-feed"><i /> Live feed <strong>{status.liveDataAvailable ? "Configured" : "Not connected"}</strong></span>
+        <span className="live-feed"><i /> Daily data <strong>{status.liveDataAvailable ? "Configured" : "Not connected"}</strong></span>
       </div>
     </div>
   );
 }
 
+// จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ Claude AI · © 2026 Thiti Theadphitukphong · All Rights Reserved.
