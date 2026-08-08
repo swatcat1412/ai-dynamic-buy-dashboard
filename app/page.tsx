@@ -4,6 +4,7 @@ import LiveIndicators from "./components/live-indicators";
 import LiveBuyEngine from "./components/live-buy-engine";
 import LiveMacro from "./components/live-macro";
 import MarketNews from "./components/market-news";
+import LiveBuyZones from "./components/live-buy-zones";
 import PriceHistory from "./components/price-history";
 
 const navigation = [
@@ -37,53 +38,6 @@ const macroIndicators = [
   { label: "Fear & Greed", value: "61", trend: "Greed", tone: "caution" },
   { label: "Nasdaq", value: "+0.72%", trend: "Up", tone: "positive" },
   { label: "S&P500", value: "+0.48%", trend: "Up", tone: "positive" },
-];
-
-const buyZones = [
-  {
-    symbol: "RKLB",
-    name: "Rocket Lab",
-    zones: [
-      { zone: "A", threshold: ">75", action: "WAIT", allocation: "—", tone: "wait" },
-      { zone: "B", threshold: "68–72", action: "ACCUMULATE", allocation: "20%", tone: "buy" },
-      { zone: "C", threshold: "62–67", action: "ACCUMULATE", allocation: "35%", tone: "buy-strong" },
-      { zone: "D", threshold: "56–61", action: "ACCUMULATE", allocation: "30%", tone: "buy" },
-      { zone: "E", threshold: "<56", action: "ACCUMULATE", allocation: "Remaining", tone: "buy-max" },
-    ],
-  },
-  {
-    symbol: "GOOGL",
-    name: "Alphabet",
-    zones: [
-      { zone: "A", threshold: ">205", action: "WAIT", allocation: "—", tone: "wait" },
-      { zone: "B", threshold: "195–205", action: "ACCUMULATE", allocation: "20%", tone: "buy" },
-      { zone: "C", threshold: "185–195", action: "ACCUMULATE", allocation: "35%", tone: "buy-strong" },
-      { zone: "D", threshold: "175–185", action: "ACCUMULATE", allocation: "30%", tone: "buy" },
-      { zone: "E", threshold: "<175", action: "ACCUMULATE", allocation: "Remaining", tone: "buy-max" },
-    ],
-  },
-  {
-    symbol: "LLY",
-    name: "Eli Lilly",
-    zones: [
-      { zone: "A", threshold: ">900", action: "WAIT", allocation: "—", tone: "wait" },
-      { zone: "B", threshold: "850–900", action: "ACCUMULATE", allocation: "20%", tone: "buy" },
-      { zone: "C", threshold: "800–850", action: "ACCUMULATE", allocation: "35%", tone: "buy-strong" },
-      { zone: "D", threshold: "740–800", action: "ACCUMULATE", allocation: "30%", tone: "buy" },
-      { zone: "E", threshold: "<740", action: "ACCUMULATE", allocation: "Remaining", tone: "buy-max" },
-    ],
-  },
-  {
-    symbol: "JEPQ",
-    name: "JPMorgan Nasdaq Equity Premium Income",
-    zones: [
-      { zone: "A", threshold: ">58", action: "WAIT", allocation: "—", tone: "wait" },
-      { zone: "B", threshold: "57–58", action: "ACCUMULATE", allocation: "20%", tone: "buy" },
-      { zone: "C", threshold: "55–56", action: "ACCUMULATE", allocation: "35%", tone: "buy-strong" },
-      { zone: "D", threshold: "53–54", action: "ACCUMULATE", allocation: "30%", tone: "buy" },
-      { zone: "E", threshold: "<52", action: "ACCUMULATE", allocation: "Remaining", tone: "buy-max" },
-    ],
-  },
 ];
 
 const technicalIndicators = [
@@ -274,39 +228,14 @@ export default function Home() {
             <p className="section-kicker">Phase 4 · Entry framework</p>
             <h3>Dynamic buy zones</h3>
           </div>
-          <span className="pill">Rules from Markdown v1.0</span>
+          <span className="pill">Daily dynamic levels</span>
         </div>
 
-        <div className="zone-grid">
-          {buyZones.map((asset) => (
-            <article className="zone-card" key={asset.symbol}>
-              <div className="zone-card-header">
-                <div>
-                  <span className="zone-symbol">{asset.symbol}</span>
-                  <p>{asset.name}</p>
-                </div>
-                <span className="zone-count">5 zones</span>
-              </div>
-              <div className="zone-table" role="table" aria-label={`${asset.symbol} dynamic buy zones`}>
-                <div className="zone-row zone-header" role="row">
-                  <span>Zone</span><span>Price range</span><span>Action</span><span>Buy</span>
-                </div>
-                {asset.zones.map((zone) => (
-                  <div className="zone-row" role="row" key={zone.zone}>
-                    <span className={`zone-badge ${zone.tone}`}>{zone.zone}</span>
-                    <span className="threshold">{zone.threshold}</span>
-                    <span className={`action-label ${zone.tone}`}>{zone.action}</span>
-                    <strong className="allocation-cell">{zone.allocation}</strong>
-                  </div>
-                ))}
-              </div>
-            </article>
-          ))}
-        </div>
+        <LiveBuyZones />
 
         <div className="zone-note">
           <span>Threshold note</span>
-          <p>แสดงช่วงราคาตาม Markdown เดิม โดยช่วงที่ยังไม่ได้ระบุจะไม่ถูกตีความเพิ่มใน Phase นี้</p>
+          <p>ระดับราคาคำนวณใหม่จากราคาปิดรายวัน, EMA20, แนวรับ 20/60 วัน และ ATR โดยใช้ cache รายวัน</p>
         </div>
 
         <div className="section-heading technical-heading" id="technical-indicators">
