@@ -3,7 +3,7 @@ import type { MacroSnapshot } from "./macro-data";
 import type { PortfolioSymbol } from "./market-data";
 
 export type BuyZone = "A" | "B" | "C" | "D" | "E" | "unmapped";
-export type BuyAction = "WAIT" | "WATCH" | "BUY";
+export type BuyAction = "WAIT" | "WATCH" | "ACCUMULATE";
 
 type ZoneDefinition = { zone: BuyZone; min: number | null; max: number | null; allocation: string; action: BuyAction };
 type RuleResult = { key: string; rule: string; signal: string; points: number; maximum: number; tone: "positive" | "neutral" | "caution"; reason: string };
@@ -11,31 +11,31 @@ type RuleResult = { key: string; rule: string; signal: string; points: number; m
 const zoneDefinitions: Record<PortfolioSymbol, ZoneDefinition[]> = {
   RKLB: [
     { zone: "A", min: 75, max: null, allocation: "—", action: "WAIT" },
-    { zone: "B", min: 68, max: 72, allocation: "20%", action: "BUY" },
-    { zone: "C", min: 62, max: 67, allocation: "35%", action: "BUY" },
-    { zone: "D", min: 56, max: 61, allocation: "30%", action: "BUY" },
-    { zone: "E", min: null, max: 56, allocation: "Remaining", action: "BUY" },
+    { zone: "B", min: 68, max: 72, allocation: "20%", action: "ACCUMULATE" },
+    { zone: "C", min: 62, max: 67, allocation: "35%", action: "ACCUMULATE" },
+    { zone: "D", min: 56, max: 61, allocation: "30%", action: "ACCUMULATE" },
+    { zone: "E", min: null, max: 56, allocation: "Remaining", action: "ACCUMULATE" },
   ],
   GOOGL: [
     { zone: "A", min: 205, max: null, allocation: "—", action: "WAIT" },
-    { zone: "B", min: 195, max: 205, allocation: "20%", action: "BUY" },
-    { zone: "C", min: 185, max: 195, allocation: "35%", action: "BUY" },
-    { zone: "D", min: 175, max: 185, allocation: "30%", action: "BUY" },
-    { zone: "E", min: null, max: 175, allocation: "Remaining", action: "BUY" },
+    { zone: "B", min: 195, max: 205, allocation: "20%", action: "ACCUMULATE" },
+    { zone: "C", min: 185, max: 195, allocation: "35%", action: "ACCUMULATE" },
+    { zone: "D", min: 175, max: 185, allocation: "30%", action: "ACCUMULATE" },
+    { zone: "E", min: null, max: 175, allocation: "Remaining", action: "ACCUMULATE" },
   ],
   LLY: [
     { zone: "A", min: 900, max: null, allocation: "—", action: "WAIT" },
-    { zone: "B", min: 850, max: 900, allocation: "20%", action: "BUY" },
-    { zone: "C", min: 800, max: 850, allocation: "35%", action: "BUY" },
-    { zone: "D", min: 740, max: 800, allocation: "30%", action: "BUY" },
-    { zone: "E", min: null, max: 740, allocation: "Remaining", action: "BUY" },
+    { zone: "B", min: 850, max: 900, allocation: "20%", action: "ACCUMULATE" },
+    { zone: "C", min: 800, max: 850, allocation: "35%", action: "ACCUMULATE" },
+    { zone: "D", min: 740, max: 800, allocation: "30%", action: "ACCUMULATE" },
+    { zone: "E", min: null, max: 740, allocation: "Remaining", action: "ACCUMULATE" },
   ],
   JEPQ: [
     { zone: "A", min: 58, max: null, allocation: "—", action: "WAIT" },
-    { zone: "B", min: 57, max: 58, allocation: "20%", action: "BUY" },
-    { zone: "C", min: 55, max: 56, allocation: "35%", action: "BUY" },
-    { zone: "D", min: 53, max: 54, allocation: "30%", action: "BUY" },
-    { zone: "E", min: null, max: 52, allocation: "Remaining", action: "BUY" },
+    { zone: "B", min: 57, max: 58, allocation: "20%", action: "ACCUMULATE" },
+    { zone: "C", min: 55, max: 56, allocation: "35%", action: "ACCUMULATE" },
+    { zone: "D", min: 53, max: 54, allocation: "30%", action: "ACCUMULATE" },
+    { zone: "E", min: null, max: 52, allocation: "Remaining", action: "ACCUMULATE" },
   ],
 };
 
@@ -68,9 +68,22 @@ export function calculateBuyEngine(symbol: PortfolioSymbol, price: number, indic
   ];
   const score = rules.reduce((total, rule) => total + rule.points, 0);
   const dataAvailable = indicators.rsi14 !== null && indicators.ema20 !== null;
-  const action: BuyAction = !dataAvailable || currentZone === "A" ? "WAIT" : score >= 60 ? "BUY" : score >= 30 ? "WATCH" : "WAIT";
+  const action: BuyAction = !dataAvailable || currentZone === "A" ? "WAIT" : score >= 60 ? "ACCUMULATE" : score >= 30 ? "WATCH" : "WAIT";
+  const round = (value: number | null) => value === null ? null : Number(value.toFixed(2));
+  const firstEntry = Math.min(price, indicators.ema20 ?? price);
+  const secondEntry = Math.min(firstEntry, indicators.support20 ?? firstEntry);
+  const thirdEntry = Math.min(secondEntry, indicators.support60 ?? secondEntry);
+  const entryLevels = [
+    { label: "เริ่มสะสม", price: round(firstEntry), allocation: "20%" },
+    { label: "แนวรับ 20 วัน", price: round(secondEntry), allocation: "35%" },
+    { label: "แนวรับ 60 วัน", price: round(thirdEntry), allocation: "30%" },
+  ];
+  const preferredEntry = round(secondEntry);
   const reasons = rules.filter((rule) => rule.points > 0).map((rule) => rule.reason);
-  if (currentZone === "A") reasons.unshift("Current price is above the defined buy range");
-  if (!reasons.length) reasons.push("No buy rule is currently triggered");
-  return { symbol, price, currentZone, score, maximum: 100, confidence: Math.round(score), action, dataAvailable, rules, zones: getZoneDefinitions(symbol), reasons };
+  if (currentZone === "A") reasons.unshift("Current price is above the defined accumulation range");
+  if (indicators.support20 !== null) reasons.push(`20-day support is ${indicators.support20.toFixed(2)}`);
+  if (!reasons.length) reasons.push("No accumulation rule is currently triggered");
+  return { symbol, price, currentZone, score, maximum: 100, confidence: Math.round(score), action, dataAvailable, preferredEntry, entryLevels, support20: indicators.support20, resistance20: indicators.resistance20, support60: indicators.support60, resistance60: indicators.resistance60, rules, zones: getZoneDefinitions(symbol), reasons };
 }
+
+// จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ Claude AI · © 2026 Thiti Theadphitukphong · All Rights Reserved.
