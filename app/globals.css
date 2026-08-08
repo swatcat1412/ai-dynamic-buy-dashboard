@@ -327,3 +327,16 @@ a { color: inherit; text-decoration: none; }
 .news-card .positive { color: var(--accent); }.news-card .negative { color: #f08c7c; }.news-card .neutral { color: var(--warm); }
 
 /* จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ Claude AI · © 2026 Thiti Theadphitukphong · All Rights Reserved. */
+@media (max-width: 800px) {
+  html, body { max-width: 100%; overflow-x: hidden; }
+  .content-area { width: 100%; min-width: 0; overflow: hidden; }
+  .news-toolbar { align-items: flex-start; flex-direction: column; gap: 8px; }
+  .news-grid { grid-template-columns: 1fr; }
+  .news-card { min-width: 0; }
+  .news-card a, .news-card-meta { overflow-wrap: anywhere; }
+  .section-heading h3, .section-kicker, .pill { max-width: 100%; overflow-wrap: anywhere; }
+  .pill { white-space: normal; line-height: 1.4; }
+  .entry-levels span { align-items: flex-start; flex-wrap: wrap; }
+}
+
+/* จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ Claude AI · © 2026 Thiti Theadphitukphong · All Rights Reserved. */
