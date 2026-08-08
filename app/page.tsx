@@ -45,10 +45,10 @@ const buyZones = [
     name: "Rocket Lab",
     zones: [
       { zone: "A", threshold: ">75", action: "WAIT", allocation: "—", tone: "wait" },
-      { zone: "B", threshold: "68–72", action: "BUY", allocation: "20%", tone: "buy" },
-      { zone: "C", threshold: "62–67", action: "BUY", allocation: "35%", tone: "buy-strong" },
-      { zone: "D", threshold: "56–61", action: "BUY", allocation: "30%", tone: "buy" },
-      { zone: "E", threshold: "<56", action: "BUY", allocation: "Remaining", tone: "buy-max" },
+      { zone: "B", threshold: "68–72", action: "ACCUMULATE", allocation: "20%", tone: "buy" },
+      { zone: "C", threshold: "62–67", action: "ACCUMULATE", allocation: "35%", tone: "buy-strong" },
+      { zone: "D", threshold: "56–61", action: "ACCUMULATE", allocation: "30%", tone: "buy" },
+      { zone: "E", threshold: "<56", action: "ACCUMULATE", allocation: "Remaining", tone: "buy-max" },
     ],
   },
   {
@@ -56,10 +56,10 @@ const buyZones = [
     name: "Alphabet",
     zones: [
       { zone: "A", threshold: ">205", action: "WAIT", allocation: "—", tone: "wait" },
-      { zone: "B", threshold: "195–205", action: "BUY", allocation: "20%", tone: "buy" },
-      { zone: "C", threshold: "185–195", action: "BUY", allocation: "35%", tone: "buy-strong" },
-      { zone: "D", threshold: "175–185", action: "BUY", allocation: "30%", tone: "buy" },
-      { zone: "E", threshold: "<175", action: "BUY", allocation: "Remaining", tone: "buy-max" },
+      { zone: "B", threshold: "195–205", action: "ACCUMULATE", allocation: "20%", tone: "buy" },
+      { zone: "C", threshold: "185–195", action: "ACCUMULATE", allocation: "35%", tone: "buy-strong" },
+      { zone: "D", threshold: "175–185", action: "ACCUMULATE", allocation: "30%", tone: "buy" },
+      { zone: "E", threshold: "<175", action: "ACCUMULATE", allocation: "Remaining", tone: "buy-max" },
     ],
   },
   {
@@ -67,10 +67,10 @@ const buyZones = [
     name: "Eli Lilly",
     zones: [
       { zone: "A", threshold: ">900", action: "WAIT", allocation: "—", tone: "wait" },
-      { zone: "B", threshold: "850–900", action: "BUY", allocation: "20%", tone: "buy" },
-      { zone: "C", threshold: "800–850", action: "BUY", allocation: "35%", tone: "buy-strong" },
-      { zone: "D", threshold: "740–800", action: "BUY", allocation: "30%", tone: "buy" },
-      { zone: "E", threshold: "<740", action: "BUY", allocation: "Remaining", tone: "buy-max" },
+      { zone: "B", threshold: "850–900", action: "ACCUMULATE", allocation: "20%", tone: "buy" },
+      { zone: "C", threshold: "800–850", action: "ACCUMULATE", allocation: "35%", tone: "buy-strong" },
+      { zone: "D", threshold: "740–800", action: "ACCUMULATE", allocation: "30%", tone: "buy" },
+      { zone: "E", threshold: "<740", action: "ACCUMULATE", allocation: "Remaining", tone: "buy-max" },
     ],
   },
   {
@@ -78,10 +78,10 @@ const buyZones = [
     name: "JPMorgan Nasdaq Equity Premium Income",
     zones: [
       { zone: "A", threshold: ">58", action: "WAIT", allocation: "—", tone: "wait" },
-      { zone: "B", threshold: "57–58", action: "BUY", allocation: "20%", tone: "buy" },
-      { zone: "C", threshold: "55–56", action: "BUY", allocation: "35%", tone: "buy-strong" },
-      { zone: "D", threshold: "53–54", action: "BUY", allocation: "30%", tone: "buy" },
-      { zone: "E", threshold: "<52", action: "BUY", allocation: "Remaining", tone: "buy-max" },
+      { zone: "B", threshold: "57–58", action: "ACCUMULATE", allocation: "20%", tone: "buy" },
+      { zone: "C", threshold: "55–56", action: "ACCUMULATE", allocation: "35%", tone: "buy-strong" },
+      { zone: "D", threshold: "53–54", action: "ACCUMULATE", allocation: "30%", tone: "buy" },
+      { zone: "E", threshold: "<52", action: "ACCUMULATE", allocation: "Remaining", tone: "buy-max" },
     ],
   },
 ];
