@@ -37,7 +37,7 @@ export default function LivePortfolio() {
         if (!response.ok || !payload.ok || !payload.quotes) throw new Error(payload.error || "Quote request failed");
         if (!cancelled) { setQuotes(payload.quotes); setState("connected"); setMessage(""); }
       } catch (error) {
-        if (!cancelled) { setState("error"); setMessage(error instanceof Error ? error.message : "Live quote request failed"); }
+        if (!cancelled) { setState("error"); setMessage(error instanceof Error ? error.message : "Daily price request failed"); }
       }
     }
     void loadQuotes();
@@ -81,7 +81,7 @@ export default function LivePortfolio() {
           </div>
         </article>
         <div className="portfolio-table" role="table" aria-label="Portfolio allocation and live quotes">
-          <div className="portfolio-row portfolio-header" role="row"><span>Symbol</span><span>Asset / Live price</span><span>Weight</span></div>
+          <div className="portfolio-row portfolio-header" role="row"><span>Symbol</span><span>Asset / Daily price</span><span>Weight</span></div>
           {assets.map((asset, index) => {
             const quote = quoteMap.get(asset.symbol);
             const change = quote?.changePercent;
