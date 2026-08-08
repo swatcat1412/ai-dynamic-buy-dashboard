@@ -3,6 +3,7 @@ import LivePortfolio from "./components/live-portfolio";
 import LiveIndicators from "./components/live-indicators";
 import LiveBuyEngine from "./components/live-buy-engine";
 import LiveMacro from "./components/live-macro";
+import MarketNews from "./components/market-news";
 import PriceHistory from "./components/price-history";
 
 const navigation = [
@@ -252,6 +253,9 @@ export default function Home() {
         </div>
 
         <LiveMacro />
+
+        <div className="section-heading news-heading" id="market-news"><div><p className="section-kicker">Phase 3 · News & catalysts</p><h3>Market news</h3></div><span className="pill">Cached sentiment</span></div>
+        <MarketNews />
 
         <div className="legacy-macro">
         <div className="macro-grid" role="list" aria-label="Macro indicators">
