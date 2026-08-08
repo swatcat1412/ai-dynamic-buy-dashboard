@@ -39,8 +39,9 @@ export default function LiveIndicators() {
   ] : [];
 
   return <>
-    <div className="indicator-toolbar"><span className={`live-state ${state}`}><i className="status-dot" />{state === "connected" ? `Live indicators · ${data?.barsUsed ?? 0} bars` : state === "loading" ? "Calculating indicators" : "Indicator data unavailable"}</span><select aria-label="Select symbol indicators" value={symbol} onChange={(event) => setSymbol(event.target.value)}>{symbols.map((item) => <option key={item}>{item}</option>)}</select></div>
+    <div className="indicator-toolbar"><span className={`live-state ${state}`}><i className="status-dot" />{state === "connected" ? `Daily indicators · ${data?.barsUsed ?? 0} bars` : state === "loading" ? "Calculating daily indicators" : "Daily indicator data unavailable"}</span><select aria-label="Select symbol indicators" value={symbol} onChange={(event) => setSymbol(event.target.value)}>{symbols.map((item) => <option key={item}>{item}</option>)}</select></div>
     {message ? <div className="indicator-message">{message}</div> : <div className="technical-grid" role="list" aria-label={`${symbol} technical indicators`}>{cards.map((item) => <article className="technical-card" role="listitem" key={item.label}><div className="technical-card-top"><span>{item.label}</span><i className={`legend-dot ${item.tone}`} /></div><strong>{item.value}</strong><span className={`technical-context ${item.tone}`}>{item.context}</span></article>)}</div>}
   </>;
 }
 
+// จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ Claude AI · © 2026 Thiti Theadphitukphong · All Rights Reserved.
