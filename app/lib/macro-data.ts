@@ -6,6 +6,8 @@ export const macroSeries = {
   vix: { label: "VIX", seriesId: "VIXCLS", unit: "index", kind: "risk" },
   nasdaq: { label: "Nasdaq Composite", seriesId: "NASDAQCOM", unit: "index", kind: "market" },
   sp500: { label: "S&P 500", seriesId: "SP500", unit: "index", kind: "market" },
+  nonfarm: { label: "Nonfarm Payrolls", seriesId: "PAYEMS", unit: "thousand", kind: "labor" },
+  unemployment: { label: "Unemployment", seriesId: "UNRATE", unit: "%", kind: "labor" },
 } as const;
 
 export type MacroKey = keyof typeof macroSeries;
@@ -53,3 +55,4 @@ export async function getMacroSnapshots() {
   return Promise.all(keys.map(buildSnapshot));
 }
 
+// จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ Claude AI · © 2026 Thiti Theadphitukphong · All Rights Reserved.
