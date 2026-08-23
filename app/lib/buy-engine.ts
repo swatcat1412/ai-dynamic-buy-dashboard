@@ -64,10 +64,11 @@ function getDynamicLevels(price: number, indicators: IndicatorSnapshot) {
 }
 
 function getDynamicZoneDefinitions(symbol: PortfolioSymbol, price: number, indicators: IndicatorSnapshot) {
-  const levels = getDynamicLevels(price, indicators);
+  const normalizedPrice = Number(price.toFixed(2));
+  const levels = getDynamicLevels(normalizedPrice, indicators);
   return [
-    { zone: "A" as const, min: price, max: null, allocation: "—", action: "WAIT" as const, range: `>${price.toFixed(2)}` },
-    { zone: "B" as const, min: levels.first, max: price, allocation: "20%", action: "ACCUMULATE" as const, range: `${levels.first.toFixed(2)}–${price.toFixed(2)}` },
+    { zone: "A" as const, min: normalizedPrice, max: null, allocation: "—", action: "WAIT" as const, range: `>${normalizedPrice.toFixed(2)}` },
+    { zone: "B" as const, min: levels.first, max: normalizedPrice, allocation: "20%", action: "ACCUMULATE" as const, range: `${levels.first.toFixed(2)}–${normalizedPrice.toFixed(2)}` },
     { zone: "C" as const, min: levels.second, max: levels.first, allocation: "35%", action: "ACCUMULATE" as const, range: `${levels.second.toFixed(2)}–${levels.first.toFixed(2)}` },
     { zone: "D" as const, min: levels.third, max: levels.second, allocation: "30%", action: "ACCUMULATE" as const, range: `${levels.third.toFixed(2)}–${levels.second.toFixed(2)}` },
     { zone: "E" as const, min: null, max: levels.third, allocation: "Remaining", action: "ACCUMULATE" as const, range: `<${levels.third.toFixed(2)}` },
@@ -79,9 +80,10 @@ export function getZoneDefinitions(symbol: PortfolioSymbol) {
 }
 export function calculateBuyEngine(symbol: PortfolioSymbol, price: number, indicators: IndicatorSnapshot, macro: MacroSnapshot[]) {
   const vix = macro.find((item) => item.key === "vix");
-  const levels = getDynamicLevels(price, indicators);
+  const normalizedPrice = Number(price.toFixed(2));
+  const levels = getDynamicLevels(normalizedPrice, indicators);
   const dynamicZones = getDynamicZoneDefinitions(symbol, price, indicators);
-  const currentZone = dynamicZones.find((zone) => inZone(price, zone))?.zone ?? "unmapped";
+  const currentZone = dynamicZones.find((zone) => inZone(normalizedPrice, zone))?.zone ?? "unmapped";
   const rules: RuleResult[] = [
     { key: "rsi", rule: "RSI <35", signal: indicators.rsi14 !== null && indicators.rsi14 < 35 ? "Triggered" : "Not triggered", points: indicators.rsi14 !== null && indicators.rsi14 < 35 ? 20 : 0, maximum: 20, tone: indicators.rsi14 !== null && indicators.rsi14 < 35 ? "positive" : "neutral", reason: indicators.rsi14 !== null && indicators.rsi14 < 35 ? "RSI is in oversold territory" : "RSI is not below 35" },
     { key: "macd", rule: "MACD Golden Cross", signal: indicators.macdTrend === "golden-cross" ? "Triggered" : "Not triggered", points: indicators.macdTrend === "golden-cross" ? 20 : 0, maximum: 20, tone: indicators.macdTrend === "golden-cross" ? "positive" : "neutral", reason: indicators.macdTrend === "golden-cross" ? "MACD crossed above its signal" : "No fresh bullish MACD cross" },
@@ -94,7 +96,7 @@ export function calculateBuyEngine(symbol: PortfolioSymbol, price: number, indic
   const dataAvailable = indicators.rsi14 !== null && indicators.ema20 !== null;
   const action: BuyAction = !dataAvailable || currentZone === "A" ? "WAIT" : score >= 60 ? "ACCUMULATE" : score >= 30 ? "WATCH" : "WAIT";
   const round = (value: number | null) => value === null ? null : Number(value.toFixed(2));
-  const firstEntry = getDynamicLevels(price, indicators).first;
+  const firstEntry = levels.first;
   const secondEntry = levels.second;
   const thirdEntry = levels.third;
   const entryLevels = [
