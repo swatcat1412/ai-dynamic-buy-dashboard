@@ -168,7 +168,7 @@ export default function Home() {
             <p className="section-kicker">Phase 6 · Daily workflow</p>
             <h3>Daily checklist & decision journal</h3>
           </div>
-          <span className="pill">Bangkok date · Browser-local</span>
+          <span className="pill">Bangkok date · Local + private sync</span>
         </div>
         <DailyChecklist />
 

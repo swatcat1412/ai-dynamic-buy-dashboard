@@ -381,3 +381,17 @@ Recheck ที่ต้องทำ:
 - Production API ผ่าน: Supabase persistent cache configured/reachable/hasEntries, quotes ครบ 7 หุ้น และ GOOGL history 260 bars
 - Production DOM ผ่าน: Daily Workflow, Browser-local disclosure และตัวเลือก 260 วันแสดงครบ
 - พบว่าเครดิตมาตรฐานมีเพียง source comment แต่ยังไม่แสดงเป็น Footer จริง จึงเพิ่ม visible responsive Footer เพื่อปิด acceptance gap
+
+### 2026-08-23 — Phase 8: Supabase Auth and private journal sync
+
+- ขอบเขต: เพิ่ม cross-device sync ให้ Daily Journal โดยคง public market dashboard และ browser-local fallback
+- ใช้ Supabase Email Magic Link เฉพาะส่วน Journal; ไม่สร้าง login wall ให้ข้อมูลตลาด
+- pin `@supabase/supabase-js` 2.112.3 และใช้ implicit client-side Auth เพราะระบบไม่อ่าน authenticated session ใน SSR
+- เพิ่มตาราง `daily_workflow_records` พร้อม composite key `user_id + workflow_date + symbol`
+- เปิด RLS และแยก policy SELECT/INSERT/UPDATE/DELETE โดยทุก policy บังคับ `(select auth.uid()) = user_id`
+- revoke สิทธิ์ `anon`; browser ใช้เฉพาะ publishable key และไม่มี secret/service key ใน client bundle
+- merge local/cloud ด้วย record ที่ `saved_at` ใหม่กว่า และ upsert กลับเพื่อ migrate local journal หลัง sign-in
+- หาก Auth/network ล้มเหลว การบันทึก localStorage ยังคงทำงานและ UI แจ้งว่า Browser safe
+- Schema migration `phase_8_daily_workflow_auth_rls` apply สำเร็จ; security advisor ไม่พบปัญหาในตารางใหม่
+- Anonymous REST recheck ได้ HTTP 401 / permission denied ตาม security boundary ที่ตั้งใจไว้
+- Recheck ระหว่างพัฒนา: 15 tests, lint, typecheck, configured production build และ local signed-out UI ผ่าน; รอ Render env/deploy และ authenticated end-to-end test

@@ -17,10 +17,27 @@ import {
   portfolioSymbols,
   type PortfolioSymbol,
 } from "../lib/portfolio-config";
+import {
+  dailyWorkflowRecordToRow,
+  mergeDailyWorkflowJournals,
+  rowsToDailyWorkflowJournal,
+} from "../lib/daily-workflow-sync";
+import { getSupabaseBrowserClient } from "../lib/supabase-browser";
 
 const storageKey = "dynamic-buy-daily-workflow-v2";
+const cloudJournalLimit = 1_000;
 
 type Quote = { symbol: PortfolioSymbol; price: number; asOf: string };
+type SyncUser = { id: string; email: string | null };
+type SyncState =
+  | "initializing"
+  | "unavailable"
+  | "signed-out"
+  | "sending"
+  | "link-sent"
+  | "syncing"
+  | "synced"
+  | "error";
 
 function migrateLegacyRecord(todayKey: string): DailyWorkflowRecord | null {
   try {
@@ -69,6 +86,13 @@ export default function DailyChecklist() {
   const [quotes, setQuotes] = useState<Quote[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [supabase] = useState(() => getSupabaseBrowserClient());
+  const [syncUser, setSyncUser] = useState<SyncUser | null>(null);
+  const [syncState, setSyncState] = useState<SyncState>(() =>
+    supabase ? "initializing" : "unavailable",
+  );
+  const [syncEmail, setSyncEmail] = useState("");
+  const [syncMessage, setSyncMessage] = useState("");
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -94,6 +118,94 @@ export default function DailyChecklist() {
     }, 0);
     return () => window.clearTimeout(timer);
   }, [todayKey]);
+
+  useEffect(() => {
+    if (!supabase) return;
+    let active = true;
+    const setUser = (user: { id: string; email?: string } | null) => {
+      if (!active) return;
+      setSyncUser(user ? { id: user.id, email: user.email ?? null } : null);
+      setSyncState(user ? "syncing" : "signed-out");
+      setSyncMessage("");
+    };
+    void supabase.auth.getUser().then(({ data, error }) => {
+      if (error) {
+        if (error.name === "AuthSessionMissingError") {
+          setUser(null);
+          return;
+        }
+        if (active) {
+          setSyncState("error");
+          setSyncMessage("Could not validate the saved sign-in session.");
+        }
+        return;
+      }
+      setUser(data.user);
+    });
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+    return () => {
+      active = false;
+      subscription.unsubscribe();
+    };
+  }, [supabase]);
+
+  useEffect(() => {
+    if (!loaded || !supabase || !syncUser) return;
+    let active = true;
+    const syncJournal = async () => {
+      setSyncState("syncing");
+      setSyncMessage("");
+      const { data, error } = await supabase
+        .from("daily_workflow_records")
+        .select(
+          "user_id,workflow_date,symbol,checked_items,decision,note,reference_price,market_as_of,saved_at",
+        )
+        .order("saved_at", { ascending: false })
+        .limit(cloudJournalLimit);
+      if (error) throw error;
+      const localJournal = parseDailyWorkflowJournal(
+        localStorage.getItem(storageKey),
+      );
+      const merged = mergeDailyWorkflowJournals(
+        localJournal,
+        rowsToDailyWorkflowJournal(data ?? []),
+      );
+      if (!active) return;
+      localStorage.setItem(storageKey, JSON.stringify(merged));
+      setJournal(merged);
+      const currentRecord = merged.records.find(
+        (item) => item.date === todayKey && item.symbol === symbol,
+      );
+      setCheckedItems(currentRecord?.checkedItems || []);
+      setDecision(currentRecord?.decision || "Not decided");
+      setNote(currentRecord?.note || "");
+      if (merged.records.length) {
+        const { error: upsertError } = await supabase
+          .from("daily_workflow_records")
+          .upsert(
+            merged.records.map((record) =>
+              dailyWorkflowRecordToRow(syncUser.id, record),
+            ),
+            { onConflict: "user_id,workflow_date,symbol" },
+          );
+        if (upsertError) throw upsertError;
+      }
+      if (active) setSyncState("synced");
+    };
+    void syncJournal().catch(() => {
+      if (active) {
+        setSyncState("error");
+        setSyncMessage("Cloud sync failed. Browser data remains available.");
+      }
+    });
+    return () => {
+      active = false;
+    };
+  }, [loaded, supabase, syncUser, symbol, todayKey]);
 
   useEffect(() => {
     let cancelled = false;
@@ -162,6 +274,52 @@ export default function DailyChecklist() {
     setJournal(nextJournal);
     setSaved(true);
     window.setTimeout(() => setSaved(false), 1800);
+    if (supabase && syncUser) {
+      setSyncState("syncing");
+      void supabase
+        .from("daily_workflow_records")
+        .upsert(dailyWorkflowRecordToRow(syncUser.id, record), {
+          onConflict: "user_id,workflow_date,symbol",
+        })
+        .then(({ error }) => {
+          if (error) {
+            setSyncState("error");
+            setSyncMessage("Saved in browser, but cloud sync failed.");
+          } else {
+            setSyncState("synced");
+            setSyncMessage("");
+          }
+        });
+    }
+  }
+
+  async function requestMagicLink() {
+    if (!supabase || !syncEmail.trim()) return;
+    setSyncState("sending");
+    setSyncMessage("");
+    const { error } = await supabase.auth.signInWithOtp({
+      email: syncEmail.trim(),
+      options: {
+        emailRedirectTo: `${window.location.origin}/`,
+        shouldCreateUser: true,
+      },
+    });
+    if (error) {
+      setSyncState("error");
+      setSyncMessage(error.message);
+      return;
+    }
+    setSyncState("link-sent");
+    setSyncMessage("Check your email and open the secure sign-in link.");
+  }
+
+  async function signOut() {
+    if (!supabase) return;
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      setSyncState("error");
+      setSyncMessage(error.message);
+    }
   }
 
   function outcome(record: DailyWorkflowRecord) {
@@ -176,7 +334,9 @@ export default function DailyChecklist() {
         <article className="checklist-summary">
           <div className="score-card-header">
             <span>Today&apos;s review · {todayKey}</span>
-            <span className="score-date">BROWSER LOCAL</span>
+            <span className="score-date">
+              {syncUser ? "CLOUD SYNC" : "BROWSER LOCAL"}
+            </span>
           </div>
           <div className="checklist-progress-number">
             {completedCount}
@@ -240,9 +400,60 @@ export default function DailyChecklist() {
               {saved ? "Saved" : "Save daily record"}
             </button>
             <small>
-              Saved only in this browser. Re-saving the same date and symbol
-              updates one record instead of creating a duplicate.
+              {syncUser
+                ? "Saved in this browser and synced to your private account."
+                : "Saved only in this browser until you sign in. Re-saving the same date and symbol updates one record."}
             </small>
+          </div>
+          <div className="journal-sync-panel" aria-label="Daily journal cloud sync">
+            <div>
+              <strong>Private journal sync</strong>
+              <small>
+                {syncUser
+                  ? syncUser.email || "Signed in"
+                  : "Optional email sign-in · browser fallback stays active"}
+              </small>
+            </div>
+            {syncState === "unavailable" ? (
+              <span className="sync-state caution">Not configured</span>
+            ) : syncUser ? (
+              <div className="sync-actions">
+                <span className={`sync-state ${syncState === "error" ? "caution" : "positive"}`}>
+                  {syncState === "syncing"
+                    ? "Syncing"
+                    : syncState === "error"
+                      ? "Browser safe"
+                      : "Synced"}
+                </span>
+                <button type="button" className="secondary-button" onClick={() => void signOut()}>
+                  Sign out
+                </button>
+              </div>
+            ) : (
+              <div className="sync-sign-in">
+                <input
+                  aria-label="Journal sync email"
+                  type="email"
+                  autoComplete="email"
+                  value={syncEmail}
+                  onChange={(event) => setSyncEmail(event.target.value)}
+                  placeholder="you@example.com"
+                />
+                <button
+                  type="button"
+                  className="secondary-button"
+                  disabled={!syncEmail.trim() || syncState === "sending"}
+                  onClick={() => void requestMagicLink()}
+                >
+                  {syncState === "sending" ? "Sending…" : "Email sign-in link"}
+                </button>
+              </div>
+            )}
+            {syncMessage ? (
+              <p className="sync-message" aria-live="polite">
+                {syncMessage}
+              </p>
+            ) : null}
           </div>
         </article>
 
