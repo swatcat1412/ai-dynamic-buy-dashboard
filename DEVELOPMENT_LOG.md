@@ -360,3 +360,16 @@ Recheck ที่ต้องทำ:
 - เพิ่ม regression test สำหรับ status timestamp; ชุดทดสอบรวมผ่าน 9 tests
 - Recheck: `npm.cmd test`, `npm.cmd run lint`, `npx.cmd tsc --noEmit`, `npm.cmd run build`, `git diff --check` และ local visual/DOM smoke ผ่าน
 - สถานะ: พร้อมเปิด PR และตรวจ production หลัง Render auto-deploy
+
+### 2026-08-23 — Phase 6 completion: history and daily decision journal
+
+- Recheck พบว่า Phase 6 เดิมยังไม่ครบ roadmap: Daily Checklist ไม่ได้ mount, history ไม่มีช่วง 260 วัน, ใช้ UTC date และ localStorage v1 เปิดประวัติหลายวันไม่ได้
+- เพิ่ม history range 260 วันทั้ง API และ UI โดยยังใช้ normalized 260-bar upstream cache ชุดเดียว
+- mount Daily Checklist และเพิ่ม symbol selector สำหรับ Target Portfolio 7 ตัว
+- เพิ่ม versioned browser-local journal v2 เก็บ date, symbol, checklist, decision, note, reference price, market date และ saved time
+- ใช้ Asia/Bangkok calendar date เพื่อป้องกันวันคลาดช่วงเที่ยงคืน และ upsert ด้วย date+symbol เพื่อไม่สร้างรายการซ้ำ
+- เพิ่ม Decision Journal ย้อนหลัง 20 รายการ พร้อม Outcome เทียบ reference price กับ quote ล่าสุด
+- migrate ข้อมูล v1 ของวันปัจจุบันแบบไม่ลบ source เดิม และ sanitize malformed local data ก่อนใช้งาน
+- ไม่ส่ง checklist/decision เข้า Supabase ผ่าน service key เพราะยังไม่มี Auth/RLS ระดับผู้ใช้; ข้อมูลจึงระบุชัดว่าเก็บเฉพาะ browser
+- Recheck: 12 tests, lint, typecheck, production build, 260-day selection, duplicate upsert, reload persistence และ local visual smoke ผ่าน
+- สถานะ: Phase 6 ผ่าน local gate; รอ PR/Render deploy และ production smoke
