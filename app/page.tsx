@@ -172,6 +172,10 @@ export default function Home() {
         </div>
         <DailyChecklist />
 
+        <footer className="site-footer">
+          <p>จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้เทคโนโลยี AI จาก OpenAI · © 2026 Thiti Theadphitukphong · All Rights Reserved.</p>
+        </footer>
+
       </section>
     </main>
   );
