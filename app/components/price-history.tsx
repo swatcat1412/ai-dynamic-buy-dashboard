@@ -163,6 +163,7 @@ export default function PriceHistory() {
               <option value="30">30 days · 1 month</option>
               <option value="60">60 days</option>
               <option value="120">120 days</option>
+              <option value="260">260 days · 1 year</option>
             </select>
           </label>
         </div>

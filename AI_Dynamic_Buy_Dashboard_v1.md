@@ -1,6 +1,6 @@
 # AI Dynamic Buy Dashboard
 
-Version: 1.0
+Version: 1.1
 
 ## วัตถุประสงค์
 
@@ -10,10 +10,13 @@ Version: 1.0
 
   Symbol     Weight
   -------- --------
-  RKLB          20%
-  GOOGL         35%
+  GOOGL       12.5%
   LLY           15%
   JEPQ          30%
+  TSM         12.5%
+  VRT           10%
+  MSFT         7.5%
+  PG          12.5%
 
 ## Market Score
 
@@ -25,6 +28,8 @@ Version: 1.0
 -   Bond Yield
 
 ## Dynamic Buy Zones
+
+ระบบปัจจุบันคำนวณ Zone A-E รายวันจากราคาปิด, EMA20, แนวรับ 20/60 วัน และ ATR สำหรับหุ้นที่เปิดใช้งานทั้ง 7 ตัว รายการด้านล่างเป็น Legacy v1 reference ที่เก็บไว้เพื่อประวัติเท่านั้น
 
 ### RKLB
 
@@ -97,6 +102,15 @@ Version: 1.0
 -   RSI
 -   MACD
 -   Buy Zone
+
+## Daily Workflow Journal
+
+-   ใช้วันที่ปฏิทิน Asia/Bangkok
+-   บันทึกแยกตาม Date + Symbol และ update รายการเดิมเพื่อป้องกันข้อมูลซ้ำ
+-   เก็บ Checklist, Manual Decision, Note, Reference Price และ Market Date
+-   แสดงประวัติย้อนหลังและ Outcome เทียบกับราคาล่าสุด
+-   เก็บเฉพาะใน Browser จนกว่าจะมี Supabase Auth/RLS ระดับผู้ใช้
+-   กราฟราคารองรับ 5/30/60/120/260 วัน
 
 ------------------------------------------------------------------------
 
