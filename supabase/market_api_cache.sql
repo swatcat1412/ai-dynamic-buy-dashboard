@@ -10,7 +10,11 @@ create index if not exists market_api_cache_expires_at_idx
 
 alter table public.market_api_cache enable row level security;
 
--- This table is intended for server-side access with SUPABASE_SERVICE_ROLE_KEY only.
--- Do not expose the service-role key to browser/client code.
+revoke all on table public.market_api_cache from anon, authenticated;
+grant select, insert, update, delete on table public.market_api_cache to service_role;
+
+-- This table is intended for server-side access with SUPABASE_SECRET_KEY only.
+-- The legacy SUPABASE_SERVICE_ROLE_KEY name remains supported during migration.
+-- Never expose either elevated key to browser/client code.
 
 -- จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้เทคโนโลยี AI จาก OpenAI · © 2026 Thiti Theadphitukphong · All Rights Reserved.

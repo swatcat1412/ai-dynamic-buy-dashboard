@@ -8,7 +8,7 @@ export type BuyAction = "WAIT" | "WATCH" | "ACCUMULATE";
 type ZoneDefinition = { zone: BuyZone; min: number | null; max: number | null; allocation: string; action: BuyAction };
 type RuleResult = { key: string; rule: string; signal: string; points: number; maximum: number; tone: "positive" | "neutral" | "caution"; reason: string };
 
-const zoneDefinitions: Record<PortfolioSymbol, ZoneDefinition[]> = {
+const zoneDefinitions: Partial<Record<PortfolioSymbol, ZoneDefinition[]>> = {
   RKLB: [
     { zone: "A", min: 75, max: null, allocation: "—", action: "WAIT" },
     { zone: "B", min: 68, max: 72, allocation: "20%", action: "ACCUMULATE" },
@@ -75,7 +75,7 @@ function getDynamicZoneDefinitions(symbol: PortfolioSymbol, price: number, indic
 }
 
 export function getZoneDefinitions(symbol: PortfolioSymbol) {
-  return zoneDefinitions[symbol].map((zone) => ({ ...zone, range: formatRange(zone) }));
+  return (zoneDefinitions[symbol] ?? []).map((zone) => ({ ...zone, range: formatRange(zone) }));
 }
 export function calculateBuyEngine(symbol: PortfolioSymbol, price: number, indicators: IndicatorSnapshot, macro: MacroSnapshot[]) {
   const vix = macro.find((item) => item.key === "vix");
@@ -110,4 +110,4 @@ export function calculateBuyEngine(symbol: PortfolioSymbol, price: number, indic
   return { symbol, price, currentZone, score, maximum: 100, confidence: Math.round(score), action, dataAvailable, preferredEntry, entryLevels, support20: indicators.support20, resistance20: indicators.resistance20, support60: indicators.support60, resistance60: indicators.resistance60, rules, zones: dynamicZones, reasons };
 }
 
-// จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ Claude AI · © 2026 Thiti Theadphitukphong · All Rights Reserved.
+// จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้เทคโนโลยี AI จาก OpenAI · © 2026 Thiti Theadphitukphong · All Rights Reserved.

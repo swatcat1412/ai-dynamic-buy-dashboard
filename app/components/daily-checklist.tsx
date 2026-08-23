@@ -22,12 +22,15 @@ export default function DailyChecklist() {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    try {
-      const savedState = JSON.parse(localStorage.getItem("dynamic-buy-checklist-v1") || "null") as { date?: string; checkedItems?: string[] } | null;
-      const savedDecision = JSON.parse(localStorage.getItem("dynamic-buy-decision-v1") || "null") as { date?: string; decision?: string; note?: string } | null;
-      if (savedState?.date === todayKey) setCheckedItems(savedState.checkedItems || []);
-      if (savedDecision?.date === todayKey) { setDecision(savedDecision.decision || "Not decided"); setNote(savedDecision.note || ""); }
-    } catch { /* Ignore malformed local browser state. */ }
+    const timer = window.setTimeout(() => {
+      try {
+        const savedState = JSON.parse(localStorage.getItem("dynamic-buy-checklist-v1") || "null") as { date?: string; checkedItems?: string[] } | null;
+        const savedDecision = JSON.parse(localStorage.getItem("dynamic-buy-decision-v1") || "null") as { date?: string; decision?: string; note?: string } | null;
+        if (savedState?.date === todayKey) setCheckedItems(savedState.checkedItems || []);
+        if (savedDecision?.date === todayKey) { setDecision(savedDecision.decision || "Not decided"); setNote(savedDecision.note || ""); }
+      } catch { /* Ignore malformed local browser state. */ }
+    }, 0);
+    return () => window.clearTimeout(timer);
   }, [todayKey]);
 
   useEffect(() => {

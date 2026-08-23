@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
 import { dashboardDataStatus } from "../../../lib/data-source";
 import { getProviderConfig } from "../../../lib/market-data";
+import { getPersistentCacheHealth } from "../../../lib/persistent-cache";
 
 export async function GET() {
   const provider = getProviderConfig();
+  const persistentCache = await getPersistentCacheHealth();
 
   return NextResponse.json({
     ok: true,
@@ -11,8 +13,9 @@ export async function GET() {
     provider: provider.provider === "twelve-data" ? "twelve-data · daily" : provider.provider,
     hasApiKey: provider.hasApiKey,
     liveDataAvailable: provider.hasApiKey,
+    persistentCache,
     lastUpdated: dashboardDataStatus.lastUpdated,
   });
 }
 
-// จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ Claude AI · © 2026 Thiti Theadphitukphong · All Rights Reserved.
+// จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้เทคโนโลยี AI จาก OpenAI · © 2026 Thiti Theadphitukphong · All Rights Reserved.

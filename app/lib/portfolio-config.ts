@@ -10,6 +10,6 @@ export type PortfolioSymbol = PortfolioAsset["symbol"];
 
 export const enabledPortfolioAssets = portfolioAssets.filter((asset) => asset.enabled);
 export const portfolioSymbols = enabledPortfolioAssets.map((asset) => asset.symbol) as PortfolioSymbol[];
-export const defaultPortfolioSymbol: PortfolioSymbol = portfolioSymbols[0] ?? "RKLB";
+export const defaultPortfolioSymbol: PortfolioSymbol = portfolioSymbols[0] ?? portfolioAssets[0].symbol;
 
 // จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้เทคโนโลยี AI จาก OpenAI · © 2026 Thiti Theadphitukphong · All Rights Reserved.

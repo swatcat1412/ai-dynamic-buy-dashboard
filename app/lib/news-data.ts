@@ -1,4 +1,4 @@
-import type { PortfolioSymbol } from "./market-data";
+import { portfolioSymbols, type PortfolioSymbol } from "./portfolio-config";
 
 export type MarketNewsItem = {
   title: string;
@@ -22,7 +22,7 @@ function sentimentLabel(value: number | null): MarketNewsItem["sentimentLabel"] 
   return value > 0 ? "Positive" : "Negative";
 }
 
-export async function getMarketNews(symbols: readonly PortfolioSymbol[] = ["RKLB", "GOOGL", "LLY", "JEPQ"]) {
+export async function getMarketNews(symbols: readonly PortfolioSymbol[] = portfolioSymbols) {
   const token = process.env.MARKETAUX_API_TOKEN;
   if (!token) return [];
 
@@ -56,4 +56,4 @@ export async function getMarketNews(symbols: readonly PortfolioSymbol[] = ["RKLB
   return value;
 }
 
-// จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ Claude AI · © 2026 Thiti Theadphitukphong · All Rights Reserved.
+// จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้เทคโนโลยี AI จาก OpenAI · © 2026 Thiti Theadphitukphong · All Rights Reserved.

@@ -6,6 +6,7 @@ import LiveMacro from "./components/live-macro";
 import MarketNews from "./components/market-news";
 import LiveBuyZones from "./components/live-buy-zones";
 import PriceHistory from "./components/price-history";
+import { enabledPortfolioAssets } from "./lib/portfolio-config";
 
 const navigation = [
   { label: "Overview", href: "#overview" },
@@ -14,12 +15,7 @@ const navigation = [
   { label: "Indicators", href: "#technical-indicators" },
 ];
 
-const portfolio = [
-  { symbol: "RKLB", name: "Rocket Lab", weight: 20, tone: "lime" },
-  { symbol: "GOOGL", name: "Alphabet", weight: 35, tone: "warm" },
-  { symbol: "LLY", name: "Eli Lilly", weight: 15, tone: "blue" },
-  { symbol: "JEPQ", name: "JPMorgan Nasdaq Equity Premium Income", weight: 30, tone: "violet" },
-];
+const portfolio = enabledPortfolioAssets;
 
 const marketScore = [
   { label: "Fed", score: 62, status: "Supportive", tone: "positive" },
@@ -291,4 +287,4 @@ export default function Home() {
   );
 }
 
-// จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ Claude AI · © 2026 Thiti Theadphitukphong · All Rights Reserved.
+// จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้เทคโนโลยี AI จาก OpenAI · © 2026 Thiti Theadphitukphong · All Rights Reserved.
