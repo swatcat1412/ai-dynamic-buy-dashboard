@@ -337,3 +337,14 @@ Recheck ที่ต้องทำ:
   - `git diff --check`: ผ่าน; `origin/main` ยังเป็น ancestor ของ branch และ branch นำหน้า 18 commits
 - ผล Recheck: Phase 0–4 ผ่านใน local/automated checks; production persistent-cache write/hit ยังรอยืนยันหลัง merge และ Render deploy
 - Gate ถัดไป: review final diff → commit/push branch → merge PR #1 → ตรวจ `/api/market/status` ว่า cache reachable/has entries → จึงเริ่ม Phase 5 target 7 หุ้น
+
+### 2026-08-23 — Phase 0–4 production gate and Phase 5 target portfolio
+
+- PR #1 ถูก squash merge เข้า `main` ที่ commit `192332fe05f0c7a5bf7fc1f954c7885444a92088`
+- Render production recheck: `/api/market/status` รายงาน Supabase persistent cache เป็น `configured=true`, `reachable=true`
+- เรียก `/api/market/quotes` หนึ่งครั้งเพื่อทดสอบการเขียนจริง แล้วตรวจซ้ำได้ `hasEntries=true` และมี `latestUpdatedAt`
+- Phase 5 ใช้ Target Portfolio: GOOGL 12.5%, LLY 15%, JEPQ 30%, TSM 12.5%, VRT 10%, MSFT 7.5%, PG 12.5% รวม 100%
+- RKLB ถูกถอดจาก enabled targets โดยเก็บ record แบบ disabled น้ำหนัก 0% เพื่อรักษาประวัติและ static zone เดิมโดยไม่ส่งต่อไปยัง market endpoints/UI
+- เพิ่ม automated tests ตรวจรายชื่อหุ้น, ผลรวมน้ำหนัก 100%, default symbol และสถานะ RKLB
+- Recheck Phase 5: `npm.cmd test` ผ่าน 7 tests, `npm.cmd run lint` ผ่าน, `npx.cmd tsc --noEmit` ผ่าน, `npm.cmd run build` ผ่าน และ `git diff --check` ผ่าน
+- สถานะ: Phase 5 target registry ผ่าน local gate และพร้อมเปิด PR แยกเพื่อ review; ยังไม่ deploy เข้า production
