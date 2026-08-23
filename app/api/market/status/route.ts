@@ -10,11 +10,12 @@ export async function GET() {
   return NextResponse.json({
     ok: true,
     mode: provider.hasApiKey ? "api-ready" : dashboardDataStatus.mode,
-    provider: provider.provider === "twelve-data" ? "twelve-data · daily" : provider.provider,
+    provider: provider.provider === "twelve-data" ? "twelve-data / daily" : provider.provider,
     hasApiKey: provider.hasApiKey,
     liveDataAvailable: provider.hasApiKey,
     persistentCache,
-    lastUpdated: dashboardDataStatus.lastUpdated,
+    lastUpdated: persistentCache.latestUpdatedAt ?? dashboardDataStatus.lastUpdated,
+    generatedAt: new Date().toISOString(),
   });
 }
 

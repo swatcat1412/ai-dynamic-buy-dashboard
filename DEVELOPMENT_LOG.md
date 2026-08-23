@@ -348,3 +348,15 @@ Recheck ที่ต้องทำ:
 - เพิ่ม automated tests ตรวจรายชื่อหุ้น, ผลรวมน้ำหนัก 100%, default symbol และสถานะ RKLB
 - Recheck Phase 5: `npm.cmd test` ผ่าน 7 tests, `npm.cmd run lint` ผ่าน, `npx.cmd tsc --noEmit` ผ่าน, `npm.cmd run build` ผ่าน และ `git diff --check` ผ่าน
 - สถานะ: Phase 5 target registry ผ่าน local gate และพร้อมเปิด PR แยกเพื่อ review; ยังไม่ deploy เข้า production
+
+### 2026-08-23 — Phase 5 production status and legacy UI cleanup
+
+- Phase 5 และ Buy Zone rounding hotfix ถูก merge/deploy แล้ว; production quotes, indicators, history, Buy Engine และ Supabase cache ผ่าน
+- แทนที่ `lastUpdated` แบบคงที่ด้วย `persistentCache.latestUpdatedAt` และเพิ่ม `generatedAt` ใน status API
+- เปลี่ยน provider label เป็น ASCII (`twelve-data / daily`) เพื่อไม่ให้ PowerShell แสดงอักขระ `Â·`
+- ลบ hidden legacy Portfolio, Macro, Technical และ Buy Engine mock blocks รวมทั้งข้อมูลจำลองที่ไม่ถูกใช้งาน
+- ปรับข้อความ UI ให้ตรงกับระบบจริง: API cache 15 นาที, FRED latest observations และ live daily indicators
+- คง Market Score เป็น `Simulated snapshot` อย่างชัดเจน เพราะยังไม่มี live composite-score provider
+- เพิ่ม regression test สำหรับ status timestamp; ชุดทดสอบรวมผ่าน 9 tests
+- Recheck: `npm.cmd test`, `npm.cmd run lint`, `npx.cmd tsc --noEmit`, `npm.cmd run build`, `git diff --check` และ local visual/DOM smoke ผ่าน
+- สถานะ: พร้อมเปิด PR และตรวจ production หลัง Render auto-deploy

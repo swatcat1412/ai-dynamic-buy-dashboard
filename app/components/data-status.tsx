@@ -2,10 +2,21 @@
 
 import { useEffect, useState } from "react";
 
-type Status = { provider: string; liveDataAvailable: boolean; lastUpdated: string };
+type Status = { provider: string; liveDataAvailable: boolean; lastUpdated: string | null };
+
+function formatTimestamp(value: string | null) {
+  if (!value) return "Waiting for cache";
+  const timestamp = new Date(value);
+  if (Number.isNaN(timestamp.getTime())) return "Unavailable";
+  return new Intl.DateTimeFormat("th-TH", {
+    dateStyle: "medium",
+    timeStyle: "short",
+    timeZone: "Asia/Bangkok",
+  }).format(timestamp);
+}
 
 export default function DataStatus() {
-  const [status, setStatus] = useState<Status>({ provider: "static", liveDataAvailable: false, lastUpdated: "—" });
+  const [status, setStatus] = useState<Status>({ provider: "checking", liveDataAvailable: false, lastUpdated: null });
 
   useEffect(() => {
     fetch("/api/market/status", { cache: "no-store" })
@@ -22,7 +33,7 @@ export default function DataStatus() {
       </div>
       <div className="data-status-items">
         <span>Source <strong>{status.provider}</strong></span>
-        <span>Snapshot <strong>{status.lastUpdated}</strong></span>
+        <span>Cache updated <strong>{formatTimestamp(status.lastUpdated)}</strong></span>
         <span className="live-feed"><i /> Daily data <strong>{status.liveDataAvailable ? "Configured" : "Not connected"}</strong></span>
       </div>
     </div>

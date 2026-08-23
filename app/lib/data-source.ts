@@ -3,14 +3,14 @@ export type DashboardDataMode = "static" | "api";
 export interface DashboardDataStatus {
   mode: DashboardDataMode;
   source: string;
-  lastUpdated: string;
+  lastUpdated: string | null;
   hasLiveData: boolean;
 }
 
 export const dashboardDataStatus: DashboardDataStatus = {
   mode: "static",
-  source: "Markdown v1.0",
-  lastUpdated: "05 AUG 2026",
+  source: "No live provider",
+  lastUpdated: null,
   hasLiveData: false,
 };
 

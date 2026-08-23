@@ -6,7 +6,6 @@ import LiveMacro from "./components/live-macro";
 import MarketNews from "./components/market-news";
 import LiveBuyZones from "./components/live-buy-zones";
 import PriceHistory from "./components/price-history";
-import { enabledPortfolioAssets } from "./lib/portfolio-config";
 
 const navigation = [
   { label: "Overview", href: "#overview" },
@@ -14,8 +13,6 @@ const navigation = [
   { label: "Buy Zones", href: "#buy-zones" },
   { label: "Indicators", href: "#technical-indicators" },
 ];
-
-const portfolio = enabledPortfolioAssets;
 
 const marketScore = [
   { label: "Fed", score: 62, status: "Supportive", tone: "positive" },
@@ -25,37 +22,6 @@ const marketScore = [
   { label: "Nasdaq", score: 74, status: "Healthy", tone: "positive" },
   { label: "Bond Yield", score: 43, status: "Pressure", tone: "caution" },
 ];
-
-const macroIndicators = [
-  { label: "Fed", value: "5.25%", trend: "Hold", tone: "neutral" },
-  { label: "10Y Treasury", value: "4.22%", trend: "+0.04%", tone: "caution" },
-  { label: "DXY", value: "103.8", trend: "-0.18%", tone: "positive" },
-  { label: "VIX", value: "16.4", trend: "Low risk", tone: "positive" },
-  { label: "Fear & Greed", value: "61", trend: "Greed", tone: "caution" },
-  { label: "Nasdaq", value: "+0.72%", trend: "Up", tone: "positive" },
-  { label: "S&P500", value: "+0.48%", trend: "Up", tone: "positive" },
-];
-
-const technicalIndicators = [
-  { label: "RSI", value: "42.8", context: "Neutral", tone: "neutral" },
-  { label: "MACD", value: "+1.24", context: "Golden cross", tone: "positive" },
-  { label: "EMA20/50/200", value: "Above", context: "Bullish stack", tone: "positive" },
-  { label: "Volume", value: "1.18×", context: "Above average", tone: "positive" },
-  { label: "ATR", value: "3.6%", context: "Moderate range", tone: "neutral" },
-  { label: "ADX", value: "27.4", context: "Trend active", tone: "positive" },
-  { label: "OBV", value: "+4.2%", context: "Accumulation", tone: "positive" },
-];
-
-const buyEngine = [
-  { rule: "RSI <35", signal: "Not triggered", points: 0, maximum: 20, tone: "neutral" },
-  { rule: "MACD Golden Cross", signal: "Triggered", points: 20, maximum: 20, tone: "positive" },
-  { rule: "Volume > Avg", signal: "Triggered", points: 10, maximum: 10, tone: "positive" },
-  { rule: "Fear & Greed <25", signal: "Not triggered", points: 0, maximum: 20, tone: "neutral" },
-  { rule: "VIX >22", signal: "Not triggered", points: 0, maximum: 15, tone: "neutral" },
-  { rule: "Price at Support", signal: "Triggered", points: 15, maximum: 15, tone: "positive" },
-];
-
-const buyEngineScore = buyEngine.reduce((total, item) => total + item.points, 0);
 
 export default function Home() {
   return (
@@ -90,7 +56,7 @@ export default function Home() {
             <p className="eyebrow">AI Dynamic Buy Dashboard · v1.0</p>
             <p className="muted">ระบบช่วยวิเคราะห์จังหวะทยอยสะสมหุ้นสหรัฐฯ</p>
           </div>
-          <div className="date-chip">05 AUG 2026</div>
+          <div className="date-chip">LIVE DAILY DATA</div>
         </header>
 
         <DataStatus />
@@ -100,7 +66,7 @@ export default function Home() {
             <p className="section-kicker">Dashboard foundation</p>
             <h2>Build conviction. Buy with a plan.</h2>
             <p className="hero-copy">
-              โครงสร้าง Dashboard พร้อมสำหรับเพิ่มข้อมูล Portfolio, Market Score และ Dynamic Buy Zones
+              Dashboard สำหรับติดตาม Portfolio เป้าหมาย ข้อมูลตลาดรายวัน และ Dynamic Buy Zones จากแหล่งข้อมูลจริง
             </p>
           </div>
           <div className="hero-orbit" aria-hidden="true">
@@ -120,48 +86,6 @@ export default function Home() {
 
         <LivePortfolio />
 
-        <div className="legacy-portfolio">
-        <div className="portfolio-layout">
-          <article className="portfolio-summary">
-            <div className="summary-topline">
-              <span className="summary-label">Target allocation</span>
-              <span className="summary-status"><span className="status-dot" /> Balanced</span>
-            </div>
-            <div className="allocation-total">100<span>%</span></div>
-            <p>สัดส่วน Portfolio เป้าหมายจากเอกสาร v1.0 แบ่งตาม conviction และบทบาทของสินทรัพย์</p>
-            <div className="allocation-stack" aria-label="Portfolio allocation breakdown">
-              {portfolio.map((asset) => (
-                <span className={`allocation-segment ${asset.tone}`} key={asset.symbol} style={{ width: `${asset.weight}%` }} />
-              ))}
-            </div>
-            <div className="allocation-legend">
-              {portfolio.map((asset) => (
-                <span key={asset.symbol}><i className={`legend-dot ${asset.tone}`} />{asset.symbol}</span>
-              ))}
-            </div>
-          </article>
-
-          <div className="portfolio-table" role="table" aria-label="Portfolio allocation">
-            <div className="portfolio-row portfolio-header" role="row">
-              <span>Symbol</span><span>Asset</span><span>Weight</span>
-            </div>
-            {portfolio.map((asset, index) => (
-              <div className="portfolio-row" role="row" key={asset.symbol}>
-                <span className="symbol-cell"><i className={`legend-dot ${asset.tone}`} />{asset.symbol}</span>
-                <span className="asset-name">{asset.name}</span>
-                <span className="weight-cell"><strong>{asset.weight}%</strong><small>0{index + 1}</small></span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="foundation-note">
-          <span>Data mode</span>
-          <p>Portfolio นี้ใช้ Static Data จาก Markdown และเตรียมโครงสร้างสำหรับเชื่อมข้อมูลจริงใน Phase หลัง</p>
-        </div>
-
-        </div>
-
         <div className="section-heading market-heading" id="market-score">
           <div>
             <p className="section-kicker">Phase 3 · Market context</p>
@@ -174,7 +98,7 @@ export default function Home() {
           <article className="market-score-card">
             <div className="score-card-header">
               <span>Composite score</span>
-              <span className="score-date">05 AUG</span>
+              <span className="score-date">MODEL</span>
             </div>
             <div className="composite-score">64<span>/100</span></div>
             <p>ภาพรวมตลาดอยู่ในโหมดสะสมแบบเลือกจังหวะ โดย AI Trend และ Nasdaq ช่วยพยุง sentiment</p>
@@ -199,25 +123,13 @@ export default function Home() {
             <p className="section-kicker">Macro dashboard</p>
             <h3>Macro indicators</h3>
           </div>
-          <span className="muted">7 signals · Static snapshot</span>
+          <span className="muted">7 FRED series · Latest observations</span>
         </div>
 
         <LiveMacro />
 
         <div className="section-heading news-heading" id="market-news"><div><p className="section-kicker">Phase 3 · News & catalysts</p><h3>Market news</h3></div><span className="pill">Cached sentiment</span></div>
         <MarketNews />
-
-        <div className="legacy-macro">
-        <div className="macro-grid" role="list" aria-label="Macro indicators">
-          {macroIndicators.map((item) => (
-            <article className="macro-card" role="listitem" key={item.label}>
-              <div className="macro-card-top"><span>{item.label}</span><i className={`legend-dot ${item.tone}`} /></div>
-              <strong>{item.value}</strong>
-              <span className={`macro-trend ${item.tone}`}>{item.trend}</span>
-            </article>
-          ))}
-        </div>
-        </div>
 
         <div className="section-heading zone-heading" id="buy-zones">
           <div>
@@ -231,7 +143,7 @@ export default function Home() {
 
         <div className="zone-note">
           <span>Threshold note</span>
-          <p>ระดับราคาคำนวณใหม่จากราคาปิดรายวัน, EMA20, แนวรับ 20/60 วัน และ ATR โดยใช้ cache รายวัน</p>
+          <p>ระดับราคาคำนวณจากราคาปิดรายวัน, EMA20, แนวรับ 20/60 วัน และ ATR โดยใช้ API cache 15 นาที</p>
         </div>
 
         <div className="section-heading technical-heading" id="technical-indicators">
@@ -239,43 +151,10 @@ export default function Home() {
             <p className="section-kicker">Phase 5 · Signal layer</p>
             <h3>Technical indicators</h3>
           </div>
-          <span className="pill">7 signals · Simulated</span>
+          <span className="pill">7 indicators · Live daily data</span>
         </div>
 
         <LiveIndicators />
-
-        <div className="legacy-technical">
-        <div className="technical-grid" role="list" aria-label="Technical indicators">
-          {technicalIndicators.map((item) => (
-            <article className="technical-card" role="listitem" key={item.label}>
-              <div className="technical-card-top"><span>{item.label}</span><i className={`legend-dot ${item.tone}`} /></div>
-              <strong>{item.value}</strong>
-              <span className={`technical-context ${item.tone}`}>{item.context}</span>
-            </article>
-          ))}
-        </div>
-        </div>
-
-        <div className="engine-layout" id="buy-engine">
-          <article className="engine-score-card">
-            <div className="score-card-header"><span>Buy engine score</span><span className="score-date">MAX 100</span></div>
-            <div className="engine-score">{buyEngineScore}<span>/100</span></div>
-            <p>คะแนนจำลองจากสัญญาณ Technical และ Macro ตามกฎในเอกสาร</p>
-            <div className="score-meter"><span style={{ width: `${buyEngineScore}%` }} /></div>
-            <div className="engine-status">Selective accumulation</div>
-          </article>
-
-          <div className="engine-list" role="list" aria-label="Buy engine rules">
-            <div className="engine-row engine-header" role="row"><span>Rule</span><span>Signal</span><span>Points</span></div>
-            {buyEngine.map((item) => (
-              <div className="engine-row" role="listitem" key={item.rule}>
-                <span className="engine-rule">{item.rule}</span>
-                <span className={`engine-signal ${item.tone}`}><i className={`status-dot ${item.tone}`} />{item.signal}</span>
-                <strong>{item.points}<small>/{item.maximum}</small></strong>
-              </div>
-            ))}
-          </div>
-        </div>
 
         <LiveBuyEngine />
 
