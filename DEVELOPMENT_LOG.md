@@ -373,3 +373,11 @@ Recheck ที่ต้องทำ:
 - ไม่ส่ง checklist/decision เข้า Supabase ผ่าน service key เพราะยังไม่มี Auth/RLS ระดับผู้ใช้; ข้อมูลจึงระบุชัดว่าเก็บเฉพาะ browser
 - Recheck: 12 tests, lint, typecheck, production build, 260-day selection, duplicate upsert, reload persistence และ local visual smoke ผ่าน
 - สถานะ: Phase 6 ผ่าน local gate; รอ PR/Render deploy และ production smoke
+
+### 2026-08-23 — Phase 6 production acceptance and footer hotfix
+
+- PR #6 ถูก squash merge เข้า `main` ที่ commit `5f3060f599223d1a33b5827d23a4490b97c3e5fd`
+- Render deployment แรกค้างหลัง build สำเร็จ จึงยกเลิกและ deploy commit เดิมใหม่จน service กลับมา Live
+- Production API ผ่าน: Supabase persistent cache configured/reachable/hasEntries, quotes ครบ 7 หุ้น และ GOOGL history 260 bars
+- Production DOM ผ่าน: Daily Workflow, Browser-local disclosure และตัวเลือก 260 วันแสดงครบ
+- พบว่าเครดิตมาตรฐานมีเพียง source comment แต่ยังไม่แสดงเป็น Footer จริง จึงเพิ่ม visible responsive Footer เพื่อปิด acceptance gap
