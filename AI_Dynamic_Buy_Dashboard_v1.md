@@ -1,6 +1,6 @@
 # AI Dynamic Buy Dashboard
 
-Version: 1.1
+Version: 1.2
 
 ## วัตถุประสงค์
 
@@ -109,8 +109,17 @@ Version: 1.1
 -   บันทึกแยกตาม Date + Symbol และ update รายการเดิมเพื่อป้องกันข้อมูลซ้ำ
 -   เก็บ Checklist, Manual Decision, Note, Reference Price และ Market Date
 -   แสดงประวัติย้อนหลังและ Outcome เทียบกับราคาล่าสุด
--   เก็บเฉพาะใน Browser จนกว่าจะมี Supabase Auth/RLS ระดับผู้ใช้
+-   ผู้ใช้ที่ยังไม่ล็อกอินเก็บข้อมูลใน Browser เป็น fallback
+-   ผู้ใช้ที่ล็อกอินด้วย Supabase Email Magic Link สามารถ sync ข้ามอุปกรณ์ได้
+-   ตาราง cloud ใช้ RLS ผูกทุก operation กับ `auth.uid()` และไม่เปิดสิทธิ์ให้ `anon`
 -   กราฟราคารองรับ 5/30/60/120/260 วัน
+
+## Private Journal Sync
+
+-   ใช้ publishable key ใน browser; ห้ามส่ง Supabase secret/service key ไป client
+-   merge local/cloud โดยเลือก record ล่าสุดของ Date + Symbol
+-   local journal ยังใช้งานได้เมื่อ Auth หรือ network ไม่พร้อม
+-   Environment: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
 
 ------------------------------------------------------------------------
 
