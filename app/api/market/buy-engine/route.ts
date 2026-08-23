@@ -11,14 +11,21 @@ function isPortfolioSymbol(value: string): value is PortfolioSymbol {
 export async function GET(request: NextRequest) {
   const symbol = request.nextUrl.searchParams.get("symbol") || "";
   if (!isPortfolioSymbol(symbol)) return NextResponse.json({ ok: false, error: "Unsupported portfolio symbol" }, { status: 400 });
+
   try {
     const provider = createMarketDataProvider();
-    const [quotes, bars, macro] = await Promise.all([provider.getQuotes([symbol]), provider.getHistory(symbol, 260), getMacroSnapshots()]);
-    const quote = quotes[0];
-    if (!quote || bars.length < 30) return NextResponse.json({ ok: false, error: "Not enough market data for buy engine" }, { status: 422 });
-    return NextResponse.json({ ok: true, engine: calculateBuyEngine(symbol, quote.price, calculateIndicators(symbol, bars), macro) });
+    const [bars, macro] = await Promise.all([provider.getHistory(symbol, 260), getMacroSnapshots()]);
+    const latest = bars.at(-1);
+    if (!latest || bars.length < 30) return NextResponse.json({ ok: false, error: "Not enough market data for buy engine" }, { status: 422 });
+
+    return NextResponse.json({
+      ok: true,
+      engine: calculateBuyEngine(symbol, latest.close, calculateIndicators(symbol, bars), macro),
+    });
   } catch (error) {
     const status = error instanceof MarketDataError ? error.status : 502;
     return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : "Buy engine request failed" }, { status });
   }
 }
+
+// จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้เทคโนโลยี AI จาก OpenAI · © 2026 Thiti Theadphitukphong · All Rights Reserved.

@@ -307,14 +307,14 @@ a { color: inherit; text-decoration: none; }
 .chart-grid { stroke: rgba(255, 255, 255, 0.07); stroke-width: 1; vector-effect: non-scaling-stroke; }
 .chart-price-label { fill: var(--muted); font-size: 10px; font-variant-numeric: tabular-nums; }
 
-/* จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ Claude AI · © 2026 Thiti Theadphitukphong · All Rights Reserved. */
+/* จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้เทคโนโลยี AI จาก OpenAI · © 2026 Thiti Theadphitukphong · All Rights Reserved. */
 .entry-levels { display: grid; gap: 7px; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); color: var(--muted); font-size: 11px; }
 .entry-levels > strong { color: var(--accent); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; }
 .entry-levels span { display: flex; justify-content: space-between; gap: 10px; }
 .entry-levels b { color: var(--ink); font-weight: 600; }
 .engine-status.accumulate { color: var(--accent); }
 
-/* จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ Claude AI · © 2026 Thiti Theadphitukphong · All Rights Reserved. */
+/* จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้เทคโนโลยี AI จาก OpenAI · © 2026 Thiti Theadphitukphong · All Rights Reserved. */
 .news-heading { margin-top: 56px; }
 .news-panel { padding: 18px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
 .news-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 12px; }
@@ -326,7 +326,7 @@ a { color: inherit; text-decoration: none; }
 .news-card-meta { justify-content: flex-start; margin-top: auto; color: #68766e; }
 .news-card .positive { color: var(--accent); }.news-card .negative { color: #f08c7c; }.news-card .neutral { color: var(--warm); }
 
-/* จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ Claude AI · © 2026 Thiti Theadphitukphong · All Rights Reserved. */
+/* จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้เทคโนโลยี AI จาก OpenAI · © 2026 Thiti Theadphitukphong · All Rights Reserved. */
 @media (max-width: 800px) {
   html, body { max-width: 100%; overflow-x: hidden; }
   .content-area { width: 100%; min-width: 0; overflow: hidden; }
@@ -339,4 +339,4 @@ a { color: inherit; text-decoration: none; }
   .entry-levels span { align-items: flex-start; flex-wrap: wrap; }
 }
 
-/* จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ Claude AI · © 2026 Thiti Theadphitukphong · All Rights Reserved. */
+/* จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้เทคโนโลยี AI จาก OpenAI · © 2026 Thiti Theadphitukphong · All Rights Reserved. */

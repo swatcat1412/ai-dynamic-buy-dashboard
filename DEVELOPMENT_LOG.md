@@ -309,3 +309,31 @@ Recheck ที่ต้องทำ:
 - กรณีทดสอบจริง RKLB ราคาอยู่ในช่วงที่เอกสาร v1 ไม่ได้กำหนดไว้ ระบบแสดง `Zone unmapped` และ `WAIT` โดยไม่สร้างกติกาใหม่เอง
 - API quota ของ Twelve Data อาจทำให้บาง request แสดง error ชั่วคราว แต่หน้าเว็บยังแสดง loading/error state และไม่เปิดเผย API Key
 - สถานะ Deploy ปัจจุบัน: ผ่านและเปิดใช้งานที่ `https://ai-dynamic-buy-dashboard.onrender.com`
+
+### 2026-08-23 — Draft PR #1 Phase 0–4 recheck and repair
+
+- ขอบเขตงาน: ตรวจ branch `phase-0-1-portfolio-registry` เทียบ `main`, ตรวจ registry/data dedupe/Supabase persistent cache/rate-limit guard และเตรียม merge โดยยังไม่แตะ production
+- ปัญหาที่พบก่อนแก้:
+  - `package-lock.json` เสียจากข้อความตัดทอนที่ปนใน JSON ทำให้ `npm.cmd ci` ใช้งานไม่ได้
+  - `persistent-cache.ts` ไม่ผ่าน TypeScript และทำให้ production build ล้มเหลว
+  - `live-buy-engine.tsx`, Market News และ legacy portfolio block ยัง hard-code หุ้นเดิม จึงไม่อ่าน portfolio registry เดียวกับ component อื่น
+  - rate limiter เดิมรอให้ upstream task จบก่อนรับ task ถัดไป ทำให้ request ที่อยู่ใน quota ถูก serialize โดยไม่จำเป็น
+  - history range 5/30/60/120/260 สร้าง cache key คนละชุดและมี TTL 24 ชั่วโมง ซึ่งทั้งเปลืองเครดิตและเสี่ยงแสดงข้อมูลเก่าเกินเป้าหมาย 15 นาที
+- สิ่งที่แก้:
+  - สร้าง lockfile ใหม่จาก `package.json`, จับคู่ `next` กับ `eslint-config-next` 16.3.2 และย้าย ESLint เป็น flat config ตาม Next.js 16
+  - รองรับ `SUPABASE_SECRET_KEY` เป็นชื่อหลัก พร้อม fallback `SUPABASE_SERVICE_ROLE_KEY` ชั่วคราว
+  - เพิ่ม safe persistent-cache health ใน `/api/market/status` โดยไม่เปิดเผย URL/key
+  - เพิ่ม explicit revoke/grant และ RLS ใน SQL; secret key อยู่ server-side เท่านั้น
+  - normalize ทุก daily history request ให้ดึง 260 bars ชุดเดียวแล้ว slice สำหรับ UI พร้อม TTL 15 นาที
+  - แก้ rate limiter ให้คุม admission 7 requests/60 วินาทีโดยไม่ serialize ระยะเวลาทำงานของ upstream task; ระบุข้อจำกัดว่าเป็น process-local guard
+  - เปลี่ยน footer ที่ยังค้างจาก Claude AI เป็นมาตรฐาน OpenAI ทั้งหมด
+- Recheck ที่ทำ:
+  - `npm.cmd test`: ผ่าน 5 tests ครอบคลุม persistent cache, rate limiter concurrency/window และ history request dedupe
+  - `npm.cmd run lint`: ผ่าน ไม่มี warning/error
+  - `npx.cmd tsc --noEmit`: ผ่าน
+  - `npm.cmd run build`: ผ่านบน Next.js 16.3.2
+  - `npm.cmd audit --omit=dev --audit-level=high`: ผ่าน ไม่พบ production dependency vulnerability
+  - local production smoke: `/` = 200, `/api/market/status` = ok, invalid symbol = 400, quotes เมื่อไม่มี key = 503 ตาม fallback contract
+  - `git diff --check`: ผ่าน; `origin/main` ยังเป็น ancestor ของ branch และ branch นำหน้า 18 commits
+- ผล Recheck: Phase 0–4 ผ่านใน local/automated checks; production persistent-cache write/hit ยังรอยืนยันหลัง merge และ Render deploy
+- Gate ถัดไป: review final diff → commit/push branch → merge PR #1 → ตรวจ `/api/market/status` ว่า cache reachable/has entries → จึงเริ่ม Phase 5 target 7 หุ้น
