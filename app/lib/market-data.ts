@@ -1,4 +1,6 @@
 import { portfolioSymbols, type PortfolioSymbol } from "./portfolio-config";
+import { getPersistentCache, setPersistentCache } from "./persistent-cache";
+import { runWithTwelveDataRateLimit } from "./api-rate-limiter";
 export { portfolioSymbols } from "./portfolio-config";
 export type { PortfolioSymbol } from "./portfolio-config";
 
@@ -64,11 +66,19 @@ async function twelveDataRequest<T>(path: string, params: Record<string, string>
   if (cached && cached.expiresAt > Date.now()) return cached.value as Promise<T>;
 
   const value = (async () => {
-    const url = new URL(`${TWELVE_DATA_URL}${path}`);
-    Object.entries(params).forEach(([key, value]) => url.searchParams.set(key, value));
-    const response = await fetch(url, { headers: { Authorization: `apikey ${apiKey}` }, next: { revalidate: 900 } });
-    const payload = (await response.json()) as T & { status?: string; message?: string };
-    if (!response.ok || payload.status === "error") throw new MarketDataError(payload.message || `Twelve Data request failed (${response.status})`, response.status);
+    const persisted = await getPersistentCache<T>(cacheKey);
+    if (persisted) return persisted;
+
+    const payload = await runWithTwelveDataRateLimit(async () => {
+      const url = new URL(`${TWELVE_DATA_URL}${path}`);
+      Object.entries(params).forEach(([key, value]) => url.searchParams.set(key, value));
+      const response = await fetch(url, { headers: { Authorization: `apikey ${apiKey}` }, next: { revalidate: 900 } });
+      const data = (await response.json()) as T & { status?: string; message?: string };
+      if (!response.ok || data.status === "error") throw new MarketDataError(data.message || `Twelve Data request failed (${response.status})`, response.status);
+      return data;
+    });
+
+    await setPersistentCache(cacheKey, payload, REQUEST_CACHE_TTL_MS);
     return payload;
   })();
 
