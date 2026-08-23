@@ -235,8 +235,8 @@ export default function LivePortfolio() {
         <p>
           {message ||
             (state === "connected"
-              ? "Daily closing prices and historical data are connected. Other sections remain static until later phases."
-              : "Portfolio target allocation is static until daily data is available.")}
+              ? "Portfolio quotes and history are connected. Macro, indicators, and Buy Engine load from their live endpoints."
+              : "Target allocation is available; waiting for daily market data.")}
         </p>
       </div>
     </>
