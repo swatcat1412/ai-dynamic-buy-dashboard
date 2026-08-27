@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test, { after } from "node:test";
-import { TwelveDataProvider } from "./market-data.ts";
+import { DAILY_MARKET_CACHE_TTL_MS, TwelveDataProvider } from "./market-data.ts";
 import { defaultPortfolioSymbol } from "./portfolio-config.ts";
 
 const originalFetch = globalThis.fetch;
@@ -24,10 +24,14 @@ test("shares one normalized 260-bar upstream request across history ranges", asy
     volume: String(1_000 + index),
   }));
 
-  globalThis.fetch = async (input) => {
+  globalThis.fetch = async (input, init) => {
     upstreamRequests += 1;
     const url = new URL(input.toString());
     assert.equal(url.searchParams.get("outputsize"), "260");
+    assert.equal(
+      (init as { next?: { revalidate?: number } } | undefined)?.next?.revalidate,
+      DAILY_MARKET_CACHE_TTL_MS / 1000,
+    );
     return Response.json({ values });
   };
 

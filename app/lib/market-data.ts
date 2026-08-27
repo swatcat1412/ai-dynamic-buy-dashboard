@@ -67,7 +67,7 @@ export class MarketDataError extends Error {
 type CachedPayload<T> = { expiresAt: number; value: T };
 const requestCache = new Map<string, Promise<CachedPayload<unknown>>>();
 const DAILY_HISTORY_BARS = 260;
-const REQUEST_CACHE_TTL_MS = 15 * 60 * 1000;
+export const DAILY_MARKET_CACHE_TTL_MS = 30 * 60 * 1000;
 
 async function twelveDataRequest<T>(
   path: string,
@@ -100,7 +100,7 @@ async function twelveDataRequest<T>(
       );
       const response = await fetch(url, {
         headers: { Authorization: `apikey ${apiKey}` },
-        next: { revalidate: REQUEST_CACHE_TTL_MS / 1000 },
+        next: { revalidate: DAILY_MARKET_CACHE_TTL_MS / 1000 },
       });
       const data = (await response.json()) as T & {
         status?: string;
@@ -114,7 +114,7 @@ async function twelveDataRequest<T>(
       return data;
     });
 
-    const expiresAt = Date.now() + REQUEST_CACHE_TTL_MS;
+    const expiresAt = Date.now() + DAILY_MARKET_CACHE_TTL_MS;
     await setPersistentCache(cacheKey, payload, expiresAt);
     return { value: payload, expiresAt };
   })();

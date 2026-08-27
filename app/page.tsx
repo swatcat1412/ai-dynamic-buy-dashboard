@@ -145,7 +145,7 @@ export default function Home() {
 
         <div className="zone-note">
           <span>Threshold note</span>
-          <p>ระดับราคาคำนวณจากราคาปิดรายวัน, EMA20, แนวรับ 20/60 วัน และ ATR โดยใช้ API cache 15 นาที</p>
+          <p>ระดับราคาคำนวณจากราคาปิดรายวัน, EMA20, แนวรับ 20/60 วัน และ ATR โดยใช้ API cache 30 นาที</p>
         </div>
 
         <div className="section-heading technical-heading" id="technical-indicators">
