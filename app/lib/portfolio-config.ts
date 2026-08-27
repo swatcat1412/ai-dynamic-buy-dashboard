@@ -1,12 +1,12 @@
 export const portfolioAssets = [
   { symbol: "GOOGL", name: "Alphabet", weight: 12.5, tone: "warm", enabled: true },
   { symbol: "LLY", name: "Eli Lilly", weight: 15, tone: "blue", enabled: true },
-  { symbol: "JEPQ", name: "JPMorgan Nasdaq Equity Premium", weight: 30, tone: "violet", enabled: true },
+  { symbol: "JEPQ", name: "JPMorgan Nasdaq Equity Premium", weight: 25, tone: "violet", enabled: true },
   { symbol: "TSM", name: "Taiwan Semiconductor Manufacturing", weight: 12.5, tone: "lime", enabled: true },
   { symbol: "VRT", name: "Vertiv", weight: 10, tone: "teal", enabled: true },
   { symbol: "MSFT", name: "Microsoft", weight: 7.5, tone: "gold", enabled: true },
   { symbol: "PG", name: "Procter & Gamble", weight: 12.5, tone: "rose", enabled: true },
-  { symbol: "RKLB", name: "Rocket Lab", weight: 0, tone: "muted", enabled: false },
+  { symbol: "RKLB", name: "Rocket Lab", weight: 5, tone: "muted", enabled: true },
 ] as const;
 
 export type PortfolioAsset = (typeof portfolioAssets)[number];

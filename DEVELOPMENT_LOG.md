@@ -395,3 +395,17 @@ Recheck ที่ต้องทำ:
 - Schema migration `phase_8_daily_workflow_auth_rls` apply สำเร็จ; security advisor ไม่พบปัญหาในตารางใหม่
 - Anonymous REST recheck ได้ HTTP 401 / permission denied ตาม security boundary ที่ตั้งใจไว้
 - Recheck ระหว่างพัฒนา: 15 tests, lint, typecheck, configured production build และ local signed-out UI ผ่าน; รอ Render env/deploy และ authenticated end-to-end test
+
+### 2026-08-27 — Phase 9: RKLB and API/cache safety
+
+- เพิ่ม RKLB กลับเข้า Target Portfolio ที่น้ำหนัก 5% และลด JEPQ จาก 30% เป็น 25% เพื่อคงผลรวมน้ำหนัก 100% โดยจำกัดสัดส่วนหุ้นเติบโตผันผวนสูง
+- Target Portfolio ใหม่มี 8 หุ้น: GOOGL, LLY, JEPQ, TSM, VRT, MSFT, PG และ RKLB
+- คง Twelve Data guard ที่ 7 requests/60 วินาที เพื่อไม่ใช้เพดาน Basic Plan 8 credits/นาทีจนหมด และให้คำขอที่ 8 รอรอบถัดไปเมื่อ cache เย็น
+- เพิ่ม TTL ของ normalized daily 260-bar cache จาก 15 เป็น 30 นาที ลดเพดานการใช้ Twelve Data จากประมาณ 768 เหลือ 384 credits/วันในกรณีมี traffic ต่อเนื่องตลอดวัน
+- เพิ่ม `portfolioSymbols` และ `marketCacheTtlMinutes` ใน status API เพื่อให้ production acceptance ตรวจจำนวนหุ้นและ cache policy ได้โดยไม่เปิดเผย secret
+- ตรวจ Supabase production พบ `market_api_cache` เปิด RLS แต่ `anon`/`authenticated` ยังมี table grants จึง apply migration `lock_down_market_api_cache_grants`
+- หลัง migration เหลือเฉพาะ `service_role` ที่มี SELECT/INSERT/UPDATE/DELETE; `anon`, `authenticated` และ `PUBLIC` ไม่มีสิทธิ์บน cache table
+- Security Advisor เหลือ INFO เรื่อง RLS ไม่มี policy ซึ่งเป็นพฤติกรรมที่ตั้งใจสำหรับ secret-only server cache และ WARN เรื่อง leaked-password protection ซึ่งไม่กระทบ Magic Link flow ปัจจุบัน
+- Local gate ผ่าน: `npm.cmd test` 15/15, `npm.cmd run lint`, `npx.cmd tsc --noEmit`, `npm.cmd run build` และ `git diff --check`
+- หลังลด grants แล้ว Render production status ยังรายงาน `persistentCache.configured/reachable/hasEntries=true` ยืนยันว่า server secret key อ่าน cache ได้ตามเดิม
+- Deployment gate ถัดไป: push/PR/merge → Render deploy → prewarm RKLB ก่อนตรวจ quotes ทั้ง 8 หุ้น เพื่อกระจาย cache expiry

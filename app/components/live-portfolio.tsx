@@ -118,7 +118,7 @@ export default function LivePortfolio() {
           <i className="status-dot" />
           {stateLabel}
         </span>
-        <span className="muted">Daily closes · 15-minute API cache</span>
+        <span className="muted">Daily closes · 30-minute API cache</span>
       </div>
       <div className="portfolio-layout">
         <article className="portfolio-summary">

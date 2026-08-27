@@ -10,7 +10,10 @@ create index if not exists market_api_cache_expires_at_idx
 
 alter table public.market_api_cache enable row level security;
 
-revoke all on table public.market_api_cache from anon, authenticated;
+revoke all privileges on table public.market_api_cache from public;
+revoke all privileges on table public.market_api_cache from anon;
+revoke all privileges on table public.market_api_cache from authenticated;
+revoke all privileges on table public.market_api_cache from service_role;
 grant select, insert, update, delete on table public.market_api_cache to service_role;
 
 -- This table is intended for server-side access with SUPABASE_SECRET_KEY only.

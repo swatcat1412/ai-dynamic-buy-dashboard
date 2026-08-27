@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { dashboardDataStatus } from "../../../lib/data-source";
-import { getProviderConfig } from "../../../lib/market-data";
+import {
+  DAILY_MARKET_CACHE_TTL_MS,
+  getProviderConfig,
+  portfolioSymbols,
+} from "../../../lib/market-data";
 import { getPersistentCacheHealth } from "../../../lib/persistent-cache";
 
 export async function GET() {
@@ -13,6 +17,8 @@ export async function GET() {
     provider: provider.provider === "twelve-data" ? "twelve-data / daily" : provider.provider,
     hasApiKey: provider.hasApiKey,
     liveDataAvailable: provider.hasApiKey,
+    portfolioSymbols,
+    marketCacheTtlMinutes: DAILY_MARKET_CACHE_TTL_MS / 60_000,
     persistentCache,
     lastUpdated: persistentCache.latestUpdatedAt ?? dashboardDataStatus.lastUpdated,
     generatedAt: new Date().toISOString(),
