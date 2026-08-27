@@ -155,6 +155,15 @@ Recheck ที่ต้องทำ:
 - ทดสอบในโหมด production
 - ทดสอบกรณีไม่มี API Key และกรณี API ล่ม
 
+### Phase 11 — Automated Quality Gate
+
+สถานะ: ผ่าน local gate และ GitHub Actions บน Pull Request; รออนุญาต merge
+
+- เพิ่ม GitHub Actions สำหรับ Pull Request และการ push เข้า `main`
+- ใช้ lockfile ติดตั้ง dependency แบบ deterministic
+- บังคับผ่าน unit tests, ESLint, TypeScript และ production build ก่อนถือว่า branch พร้อม merge
+- จำกัด workflow เป็น read-only และยกเลิก run เก่าของ branch เดียวกันเมื่อมี commit ใหม่
+
 ## สถานะปัจจุบันที่ยืนยันได้
 
 - มีไฟล์ `.env.local` และพบชื่อตัวแปร `TWELVE_DATA_API_KEY`, `FRED_API_KEY`
@@ -419,3 +428,15 @@ Recheck ที่ต้องทำ:
 - Visual QA พบ hydration mismatch เดิมใน SVG `<title>` ของ Price History เพราะ React ได้ children สอง text nodes; แก้เป็น template string หนึ่งค่าและตรวจซ้ำจน console ไม่มี error
 - Local gate ผ่าน: tests 15/15, lint, typecheck, production build และ `git diff --check`
 - Local browser QA ผ่าน: ไม่พบ Daily Workflow/Private journal sync, navigation เหลือ 4 รายการ, Price History และ Footer ยังแสดง และ console ไม่มี error
+
+### 2026-08-27 — Phase 11: automated quality gate
+
+- ขอบเขต: เพิ่ม CI ที่ตรวจ source code โดยไม่เรียก production API และไม่ใช้ Render/Supabase/Twelve Data/FRED secrets
+- เพิ่ม `.github/workflows/quality-gate.yml` ให้ทำงานเมื่อเปิด/อัปเดต Pull Request เข้า `main` และเมื่อ push เข้า `main`
+- ใช้ Node.js 22, `npm ci --ignore-scripts --no-audit --no-fund`, unit tests, ESLint, TypeScript และ production build
+- เพิ่ม `npm run typecheck` เป็นคำสั่งกลางสำหรับ local และ CI
+- Security boundary: workflow ใช้สิทธิ์ `contents: read` เท่านั้น และไม่มี secret ใน workflow
+- Windows recheck พบ `npm ci` ชนไฟล์ SWC และ global npm cache ที่ถูกล็อก; หยุดเฉพาะ dev server ของโปรเจกต์และใช้ temporary npm cache แยก จากนั้น locked install ผ่านโดยไม่แก้ lockfile
+- Local gate ผ่าน: `npm.cmd test` 15/15, `npm.cmd run lint`, `npm.cmd run typecheck`, `npm.cmd run build`, workflow structure check และ `git diff --check`
+- PR #11 เรียก `Quality Gate` run #1 บน GitHub-hosted Ubuntu สำเร็จครบ locked install, tests, lint, typecheck และ build
+- Gate ถัดไป: ตรวจ final diff/CI ของ head commit และขออนุญาตก่อน squash merge; Phase นี้ไม่เปลี่ยน runtime จึงตรวจ deployment เฉพาะ health/status หลัง merge
