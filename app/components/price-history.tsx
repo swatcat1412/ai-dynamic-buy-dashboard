@@ -179,7 +179,7 @@ export default function PriceHistory() {
             aria-label={`${symbol} closing price history with price scale`}
             preserveAspectRatio="none"
           >
-            <title>{symbol} price history</title>
+            <title>{`${symbol} price history`}</title>
             <desc>
               Closing price line with a 20-day exponential moving average and
               price labels.

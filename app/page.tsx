@@ -6,14 +6,12 @@ import LiveMacro from "./components/live-macro";
 import MarketNews from "./components/market-news";
 import LiveBuyZones from "./components/live-buy-zones";
 import PriceHistory from "./components/price-history";
-import DailyChecklist from "./components/daily-checklist";
 
 const navigation = [
   { label: "Overview", href: "#overview" },
   { label: "Market Score", href: "#market-score" },
   { label: "Buy Zones", href: "#buy-zones" },
   { label: "Indicators", href: "#technical-indicators" },
-  { label: "Daily Workflow", href: "#daily-workflow" },
 ];
 
 const marketScore = [
@@ -162,15 +160,6 @@ export default function Home() {
 
         <div className="section-heading history-heading" id="price-history"><div><p className="section-kicker">Phase 6 · History</p><h3>Price history</h3></div><span className="pill">Daily OHLCV · EMA20</span></div>
         <PriceHistory />
-
-        <div className="section-heading checklist-heading" id="daily-workflow">
-          <div>
-            <p className="section-kicker">Phase 6 · Daily workflow</p>
-            <h3>Daily checklist & decision journal</h3>
-          </div>
-          <span className="pill">Bangkok date · Local + private sync</span>
-        </div>
-        <DailyChecklist />
 
         <footer className="site-footer">
           <p>จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้เทคโนโลยี AI จาก OpenAI · © 2026 Thiti Theadphitukphong · All Rights Reserved.</p>

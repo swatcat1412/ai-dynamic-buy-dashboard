@@ -93,34 +93,12 @@ Version: 1.2
 -   VIX \>22 = +15
 -   Price at Support = +15
 
-## Daily Checklist
+## Daily Workflow (retired from dashboard)
 
--   Nasdaq
--   VIX
--   Bond Yield
--   DXY
--   Earnings
--   RSI
--   MACD
--   Buy Zone
-
-## Daily Workflow Journal
-
--   ใช้วันที่ปฏิทิน Asia/Bangkok
--   บันทึกแยกตาม Date + Symbol และ update รายการเดิมเพื่อป้องกันข้อมูลซ้ำ
--   เก็บ Checklist, Manual Decision, Note, Reference Price และ Market Date
--   แสดงประวัติย้อนหลังและ Outcome เทียบกับราคาล่าสุด
--   ผู้ใช้ที่ยังไม่ล็อกอินเก็บข้อมูลใน Browser เป็น fallback
--   ผู้ใช้ที่ล็อกอินด้วย Supabase Email Magic Link สามารถ sync ข้ามอุปกรณ์ได้
--   ตาราง cloud ใช้ RLS ผูกทุก operation กับ `auth.uid()` และไม่เปิดสิทธิ์ให้ `anon`
--   กราฟราคารองรับ 5/30/60/120/260 วัน
-
-## Private Journal Sync
-
--   ใช้ publishable key ใน browser; ห้ามส่ง Supabase secret/service key ไป client
--   merge local/cloud โดยเลือก record ล่าสุดของ Date + Symbol
--   local journal ยังใช้งานได้เมื่อ Auth หรือ network ไม่พร้อม
--   Environment: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+-   ถอด Daily Checklist, Decision Journal และ Email Magic Link UI ออกจากหน้า Dashboard ตามการตัดสินใจวันที่ 2026-08-27
+-   หน้าเว็บจึงไม่ mount Supabase browser client และไม่เรียก Auth/journal sync ระหว่างใช้งาน Dashboard
+-   ยังไม่ลบ browser-local records หรือตาราง `daily_workflow_records` ใน Supabase เพื่อรักษาข้อมูลและรองรับการย้อนกลับ
+-   กราฟราคารองรับ 5/30/60/120/260 วันตามเดิม
 
 ------------------------------------------------------------------------
 

@@ -409,3 +409,13 @@ Recheck ที่ต้องทำ:
 - Local gate ผ่าน: `npm.cmd test` 15/15, `npm.cmd run lint`, `npx.cmd tsc --noEmit`, `npm.cmd run build` และ `git diff --check`
 - หลังลด grants แล้ว Render production status ยังรายงาน `persistentCache.configured/reachable/hasEntries=true` ยืนยันว่า server secret key อ่าน cache ได้ตามเดิม
 - Deployment gate ถัดไป: push/PR/merge → Render deploy → prewarm RKLB ก่อนตรวจ quotes ทั้ง 8 หุ้น เพื่อกระจาย cache expiry
+
+### 2026-08-27 — Phase 10: retire Daily Workflow UI
+
+- ถอดเมนู `Daily Workflow`, section heading, Daily Checklist, Decision Journal และ Private journal sync ออกจากหน้า Dashboard ตามภาพที่ผู้ใช้ยืนยันให้ลบ
+- ไม่ mount `DailyChecklist` จึงไม่มี Supabase browser client, Auth listener หรือ journal sync request ทำงานจากหน้า production
+- เก็บ component/library/tests และตาราง `daily_workflow_records` ไว้ชั่วคราวเพื่อให้ย้อนกลับได้; ไม่ลบ browser-local records หรือข้อมูล Supabase
+- RKLB และ Target Portfolio 8 หุ้นไม่เปลี่ยนแปลง
+- Visual QA พบ hydration mismatch เดิมใน SVG `<title>` ของ Price History เพราะ React ได้ children สอง text nodes; แก้เป็น template string หนึ่งค่าและตรวจซ้ำจน console ไม่มี error
+- Local gate ผ่าน: tests 15/15, lint, typecheck, production build และ `git diff --check`
+- Local browser QA ผ่าน: ไม่พบ Daily Workflow/Private journal sync, navigation เหลือ 4 รายการ, Price History และ Footer ยังแสดง และ console ไม่มี error
