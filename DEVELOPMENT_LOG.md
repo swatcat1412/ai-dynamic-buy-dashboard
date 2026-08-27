@@ -157,7 +157,7 @@ Recheck ที่ต้องทำ:
 
 ### Phase 11 — Automated Quality Gate
 
-สถานะ: ผ่าน local gate; รอยืนยัน GitHub Actions บน Pull Request
+สถานะ: ผ่าน local gate และ GitHub Actions บน Pull Request; รออนุญาต merge
 
 - เพิ่ม GitHub Actions สำหรับ Pull Request และการ push เข้า `main`
 - ใช้ lockfile ติดตั้ง dependency แบบ deterministic
@@ -438,4 +438,5 @@ Recheck ที่ต้องทำ:
 - Security boundary: workflow ใช้สิทธิ์ `contents: read` เท่านั้น และไม่มี secret ใน workflow
 - Windows recheck พบ `npm ci` ชนไฟล์ SWC และ global npm cache ที่ถูกล็อก; หยุดเฉพาะ dev server ของโปรเจกต์และใช้ temporary npm cache แยก จากนั้น locked install ผ่านโดยไม่แก้ lockfile
 - Local gate ผ่าน: `npm.cmd test` 15/15, `npm.cmd run lint`, `npm.cmd run typecheck`, `npm.cmd run build`, workflow structure check และ `git diff --check`
-- Gate ถัดไป: เปิด PR และยืนยันว่า GitHub-hosted Ubuntu runner ผ่าน `Quality Gate`; ยังไม่ merge หรือ deploy ก่อน CI ผ่าน
+- PR #11 เรียก `Quality Gate` run #1 บน GitHub-hosted Ubuntu สำเร็จครบ locked install, tests, lint, typecheck และ build
+- Gate ถัดไป: ตรวจ final diff/CI ของ head commit และขออนุญาตก่อน squash merge; Phase นี้ไม่เปลี่ยน runtime จึงตรวจ deployment เฉพาะ health/status หลัง merge
