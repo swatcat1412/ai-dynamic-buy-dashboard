@@ -164,6 +164,16 @@ Recheck ที่ต้องทำ:
 - บังคับผ่าน unit tests, ESLint, TypeScript และ production build ก่อนถือว่า branch พร้อม merge
 - จำกัด workflow เป็น read-only และยกเลิก run เก่าของ branch เดียวกันเมื่อมี commit ใหม่
 
+### Phase 12 — Enforce Quality Gate
+
+สถานะ: เสร็จสมบูรณ์
+
+- เปลี่ยน repository เป็น Public เพื่อให้ repository rules มีผลบน GitHub Free โดยไม่เพิ่มค่าใช้จ่าย
+- สร้าง Active Ruleset `Protect main with Quality Gate` ครอบคลุม default branch `main`
+- บังคับ Pull Request, `Quality Gate`, และการทดสอบกับ `main` ล่าสุด
+- ป้องกัน force-push และการลบ `main`; ไม่บังคับ approval เพื่อให้เจ้าของคนเดียว merge ได้
+- ไม่มี bypass actor และไม่เปลี่ยน runtime code, API, Supabase schema หรือ secrets
+
 ## สถานะปัจจุบันที่ยืนยันได้
 
 - มีไฟล์ `.env.local` และพบชื่อตัวแปร `TWELVE_DATA_API_KEY`, `FRED_API_KEY`
@@ -440,3 +450,15 @@ Recheck ที่ต้องทำ:
 - Local gate ผ่าน: `npm.cmd test` 15/15, `npm.cmd run lint`, `npm.cmd run typecheck`, `npm.cmd run build`, workflow structure check และ `git diff --check`
 - PR #11 เรียก `Quality Gate` run #1 บน GitHub-hosted Ubuntu สำเร็จครบ locked install, tests, lint, typecheck และ build
 - Gate ถัดไป: ตรวจ final diff/CI ของ head commit และขออนุญาตก่อน squash merge; Phase นี้ไม่เปลี่ยน runtime จึงตรวจ deployment เฉพาะ health/status หลัง merge
+
+### 2026-08-30 — Phase 12: enforce quality gate
+
+- ยืนยัน repository visibility เป็น `public` ผ่าน GitHub Settings หลังผู้ใช้รับทราบผลกระทบเรื่อง source, history, fork และ Actions logs
+- สร้าง Ruleset ID `21860785` ชื่อ `Protect main with Quality Gate` สถานะ Active และ target `main`
+- ยืนยันกฎที่ใช้งาน: Require pull request, Require status check `Quality Gate`, Require branch up to date, Block force pushes และ Restrict deletions
+- Required approvals เป็น 0 และ bypass list ว่าง เพื่อรักษา workflow แบบเจ้าของคนเดียวโดยยังบังคับ CI ก่อน merge
+- Recheck หน้า Settings ยืนยันข้อความ `Ruleset created`, `Active`, `Applies to 1 target: main` และ `Status checks that are required: Quality Gate`
+- แก้ required check ให้ตรงกับ check ที่ workflow รายงานบน PR (`Quality Gate` / `Test, lint, typecheck, and build (pull_request)`) และบันทึก Ruleset หลังแก้ไข
+- เพิ่ม `PROJECT_HANDOFF.md` สำหรับย้ายงานไปเครื่องอื่น โดยระบุสถานะ Phase, production acceptance, PowerShell commands และ secret boundary
+- ปรับชื่อ CI job ให้ตรงกับ required check ที่ Ruleset บันทึกได้ (`typecheck, and build`) โดยยังคงรัน tests, lint, typecheck และ build ครบใน job เดียว
+- หลังเปิด Ruleset แล้วต้องตรวจ fresh PR validation run บน commit ล่าสุดก่อน merge เพื่อยืนยันว่า enforcement ทำงานจริง
