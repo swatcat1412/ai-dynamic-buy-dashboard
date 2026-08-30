@@ -460,4 +460,5 @@ Recheck ที่ต้องทำ:
 - Recheck หน้า Settings ยืนยันข้อความ `Ruleset created`, `Active`, `Applies to 1 target: main` และ `Status checks that are required: Quality Gate`
 - แก้ required check ให้ตรงกับ check ที่ workflow รายงานบน PR (`Quality Gate` / `Test, lint, typecheck, and build (pull_request)`) และบันทึก Ruleset หลังแก้ไข
 - เพิ่ม `PROJECT_HANDOFF.md` สำหรับย้ายงานไปเครื่องอื่น โดยระบุสถานะ Phase, production acceptance, PowerShell commands และ secret boundary
+- ปรับชื่อ CI job ให้ตรงกับ required check ที่ Ruleset บันทึกได้ (`typecheck, and build`) โดยยังคงรัน tests, lint, typecheck และ build ครบใน job เดียว
 - หลังเปิด Ruleset แล้วต้องตรวจ fresh PR validation run บน commit ล่าสุดก่อน merge เพื่อยืนยันว่า enforcement ทำงานจริง
