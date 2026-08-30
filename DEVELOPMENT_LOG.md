@@ -458,3 +458,4 @@ Recheck ที่ต้องทำ:
 - ยืนยันกฎที่ใช้งาน: Require pull request, Require status check `Quality Gate`, Require branch up to date, Block force pushes และ Restrict deletions
 - Required approvals เป็น 0 และ bypass list ว่าง เพื่อรักษา workflow แบบเจ้าของคนเดียวโดยยังบังคับ CI ก่อน merge
 - Recheck หน้า Settings ยืนยันข้อความ `Ruleset created`, `Active`, `Applies to 1 target: main` และ `Status checks that are required: Quality Gate`
+- หลังเปิด Ruleset แล้ว GitHub ต้องการ status check ใหม่บน commit ล่าสุด; จึงทำ fresh PR validation run ก่อน merge เพื่อยืนยันว่า enforcement ทำงานจริง
