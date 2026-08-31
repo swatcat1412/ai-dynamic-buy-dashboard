@@ -89,7 +89,7 @@ export default function LiveBuyZones() {
               <span>Buy</span>
             </div>
             {asset.zones.map((zone) => (
-              <div className="zone-row" role="row" key={zone.zone}>
+              <div className={`zone-row ${zone.zone === asset.currentZone ? "current" : ""}`} role="row" key={zone.zone}>
                 <span className={`zone-badge ${zoneTone(zone.zone)}`}>
                   {zone.zone}
                 </span>

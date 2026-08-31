@@ -73,6 +73,7 @@ npm.cmd ci --ignore-scripts --no-audit --no-fund --cache 'C:\Users\<user>\AppDat
 
 - `TWELVE_DATA_API_KEY`
 - `FRED_API_KEY`
+- `MARKETAUX_API_TOKEN` (optional, for market news)
 - `SUPABASE_URL`
 - `SUPABASE_SECRET_KEY` (หรือชื่อที่ production ใช้อยู่ตาม deployment ปัจจุบัน)
 

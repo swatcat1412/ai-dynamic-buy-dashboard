@@ -190,6 +190,8 @@ a { color: inherit; text-decoration: none; }
 .zone-table { padding: 5px 20px; }
 .zone-row { display: grid; grid-template-columns: 42px 1.15fr 0.7fr 0.85fr; align-items: center; gap: 10px; min-height: 48px; border-bottom: 1px solid var(--line); font-size: 11px; }
 .zone-row:last-child { border-bottom: 0; }
+.zone-row.current { background: rgba(182, 227, 109, .09); color: var(--accent-dark); font-weight: 600; }
+.zone-row.current .threshold, .zone-row.current .allocation-cell { color: var(--ink); font-weight: 700; }
 .zone-header { min-height: 35px; color: #65736b; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; }
 .zone-badge { display: grid; place-items: center; width: 25px; height: 25px; border-radius: 7px; font-size: 10px; font-weight: 700; }
 .zone-badge.wait { color: var(--warm); background: rgba(244, 197, 138, 0.12); }

@@ -123,7 +123,7 @@ export default function Home() {
             <p className="section-kicker">Macro dashboard</p>
             <h3>Macro indicators</h3>
           </div>
-          <span className="muted">7 FRED series · Latest observations</span>
+          <span className="muted">9 FRED series · Latest observations</span>
         </div>
 
         <LiveMacro />

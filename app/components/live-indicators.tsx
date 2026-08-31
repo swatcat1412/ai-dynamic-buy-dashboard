@@ -91,7 +91,7 @@ export default function LiveIndicators() {
         },
         {
           label: "EMA20/50/200",
-          value: data.emaTrend.replace("-", " "),
+          value: `${format(data.ema20)} / ${format(data.ema50)} / ${format(data.ema200)}`,
           context: data.ema200 === null ? "Need 200 bars" : "Trend stack",
           tone: data.emaTrend === "bullish-stack" ? "positive" : "neutral",
         },

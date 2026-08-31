@@ -23,7 +23,7 @@ export default function LiveMacro() {
     return () => { cancelled = true; };
   }, []);
 
-  const items: Macro[] = macro.length ? macro : Array.from({ length: 7 }, (_, index) => ({ key: String(index), label: "Loading", unit: "", kind: "", value: null, change: null, date: null, status: "unavailable" as const }));
+  const items: Macro[] = macro.length ? macro : Array.from({ length: 9 }, (_, index) => ({ key: String(index), label: "Loading", unit: "", kind: "", value: null, change: null, date: null, status: "unavailable" as const }));
   return <>
     <div className="macro-live-toolbar"><span className={`live-state ${state}`}><i className="status-dot" />{state === "connected" ? "FRED macro feed connected" : state === "loading" ? "Loading macro data" : "Macro data unavailable"}</span><span className="muted">Latest available observation · FRED</span></div>
     {message && <div className="indicator-message">{message}</div>}

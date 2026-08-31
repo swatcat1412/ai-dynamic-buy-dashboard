@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { calculateBuyEngine } from "./buy-engine.ts";
 import type { IndicatorSnapshot } from "./indicators.ts";
+import type { MacroSnapshot } from "./macro-data.ts";
 
 const indicators: IndicatorSnapshot = {
   symbol: "PG",
@@ -37,8 +38,42 @@ test("normalizes sub-cent prices before building and matching dynamic zones", ()
   );
 
   assert.equal(result.currentZone, "B");
-  assert.equal(result.zones[1].range, "144.68–144.68");
+  assert.equal(result.zones[1].range, "142.68–144.68");
+  assert.ok(result.zones[1].min! < result.zones[1].max!);
   assert.ok(boundedZones.every((zone) => zone.min! <= zone.max!));
+});
+
+test("keeps every dynamic accumulation zone strictly ordered", () => {
+  const result = calculateBuyEngine("PG", 155, indicators, []);
+  const [zoneB, zoneC, zoneD] = result.zones;
+
+  assert.ok(zoneB.min! < zoneB.max!);
+  assert.ok(zoneC.min! < zoneC.max!);
+  assert.ok(zoneD.min! < zoneD.max!);
+  assert.ok(zoneB.max! > zoneB.min!);
+  assert.ok(zoneB.min! >= zoneC.max!);
+  assert.ok(zoneC.min! >= zoneD.max!);
+});
+
+test("excludes unavailable rules from score maximum and confidence", () => {
+  const vix: MacroSnapshot = {
+    key: "vix",
+    label: "VIX",
+    seriesId: "VIXCLS",
+    unit: "index",
+    kind: "risk",
+    value: 18,
+    previousValue: 19,
+    change: -1,
+    changePercent: -5.26,
+    date: "2026-08-21",
+    status: "ok",
+  };
+  const result = calculateBuyEngine("PG", 144.68, indicators, [vix]);
+
+  assert.equal(result.maximum, 80);
+  assert.equal(result.confidence, 80);
+  assert.equal(result.normalizedScore, Math.round((result.score / result.maximum) * 100));
 });
 
 // จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้เทคโนโลยี AI จาก OpenAI · © 2026 Thiti Theadphitukphong · All Rights Reserved.

@@ -31,7 +31,7 @@ export default function PriceHistory() {
   const [message, setMessage] = useState("");
   useEffect(() => {
     let cancelled = false;
-    fetch(`/api/market/history?symbol=${symbol}&range=${range}`, {
+        fetch(`/api/market/history?symbol=${symbol}&range=260`, {
       cache: "no-store",
     })
       .then(async (response) => {
@@ -59,14 +59,18 @@ export default function PriceHistory() {
     return () => {
       cancelled = true;
     };
-  }, [symbol, range]);
+  }, [symbol]);
+  const displayBars = useMemo(() => {
+    const requestedRange = Number(range);
+    return bars.slice(-([5, 30, 60, 120, 260].includes(requestedRange) ? requestedRange : 120));
+  }, [bars, range]);
   const points = useMemo(() => {
     const width = 724,
       left = 56,
       right = 780,
       top = 18,
       bottom = 210;
-    if (!bars.length)
+    if (!displayBars.length)
       return {
         close: "",
         ema: "",
@@ -77,9 +81,11 @@ export default function PriceHistory() {
         lastDate: "",
         grid: [] as Array<{ y: number; value: number; label: string }>,
         emaAvailable: false,
+        emaLast: null as number | null,
       };
-    const values = bars.map((bar) => bar.close);
-    const emaValues = ema(values, 20);
+    const values = displayBars.map((bar) => bar.close);
+    const allValues = bars.map((bar) => bar.close);
+    const emaValues = ema(allValues, 20).slice(-displayBars.length);
     const all = values.concat(
       emaValues.filter((value): value is number => value !== null),
     );
@@ -87,20 +93,23 @@ export default function PriceHistory() {
       max = Math.max(...all),
       spread = Math.max(max - min, 0.0001);
     const x = (index: number) =>
-      bars.length === 1
+      displayBars.length === 1
         ? (left + right) / 2
-        : left + (index / (bars.length - 1)) * width;
+        : left + (index / (displayBars.length - 1)) * width;
     const y = (value: number) =>
       bottom - ((value - min) / spread) * (bottom - top);
-    const path = (series: (number | null)[]) =>
-      series
-        .map((value, index) =>
-          value === null
-            ? ""
-            : `${index ? "L" : "M"} ${x(index).toFixed(1)} ${y(value).toFixed(1)}`,
-        )
+    const path = (series: (number | null)[]) => {
+      let started = false;
+      return series
+        .map((value, index) => {
+          if (value === null) return "";
+          const command = started ? "L" : "M";
+          started = true;
+          return `${command} ${x(index).toFixed(1)} ${y(value).toFixed(1)}`;
+        })
         .filter(Boolean)
         .join(" ");
+    };
     const grid = Array.from({ length: 5 }, (_, index) => {
       const ratio = index / 4;
       const value = max - ratio * spread;
@@ -116,19 +125,20 @@ export default function PriceHistory() {
       min,
       max,
       last: values.at(-1) ?? null,
-      firstDate: bars[0].time,
-      lastDate: bars.at(-1)?.time ?? "",
+      firstDate: displayBars[0].time,
+      lastDate: displayBars.at(-1)?.time ?? "",
       grid,
       emaAvailable: emaValues.some((value) => value !== null),
+      emaLast: emaValues.at(-1) ?? null,
     };
-  }, [bars]);
+  }, [bars, displayBars]);
   return (
     <div className="history-panel">
       <div className="history-toolbar">
         <div className={`live-state ${state}`}>
           <i className="status-dot" />
           {state === "connected"
-            ? `${bars.length} daily bars`
+            ? `${displayBars.length} daily bars`
             : state === "loading"
               ? "Loading price history"
               : "History unavailable"}
@@ -214,6 +224,7 @@ export default function PriceHistory() {
             <span>{points.firstDate || "—"}</span>
             <span>
               Close <i className="chart-key close-key" /> EMA20{" "}
+              {points.emaLast === null ? "—" : points.emaLast.toFixed(2)}{" "}
               <i className="chart-key ema-key" />
             </span>
             <span>{points.lastDate || "—"}</span>
