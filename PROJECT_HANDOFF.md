@@ -16,7 +16,7 @@
 
 - Phase 0–10: ผ่านและใช้งานใน production แล้ว
 - Phase 11: Quality Gate workflow ผ่าน และ merge เข้า `main` แล้ว
-- Phase 12: repository เป็น Public และเปิด Ruleset ป้องกัน `main`; PR #12 เป็นเอกสาร/การตั้งค่าเท่านั้น และต้องตรวจสถานะ merge หลัง CI ล่าสุดผ่าน
+- Phase 12: repository เป็น Public และเปิด Ruleset ป้องกัน `main`; PR #12 merge เข้า `main` แล้วที่ commit `5c44aa3`
 - Phase ถัดไปที่แนะนำ: Phase 13 — Vercel deployment/observability หลังยืนยัน PR #12 และ production smoke
 
 ## Ruleset policy
@@ -78,9 +78,9 @@ npm.cmd ci --ignore-scripts --no-audit --no-fund --cache 'C:\Users\<user>\AppDat
 
 ## ขั้นถัดไป
 
-1. ตรวจ PR #12 ว่า required check แสดงผลสำเร็จและ squash merge ได้ภายใต้ Ruleset
-2. หลัง merge ให้ตรวจ `main` และ production health อีกครั้ง
-3. เริ่ม Phase 13: สร้าง Vercel project จาก repository นี้, ตั้งค่า env แยก production/preview, แล้วทำ smoke test ทุก market route
+1. ตรวจ production health อีกครั้งจากเครือข่ายที่เข้าถึง Render ได้ และยืนยัน market routes ครบถ้วน
+2. เริ่ม Phase 13: สร้าง Vercel project จาก repository นี้, ตั้งค่า env แยก production/preview, แล้วทำ smoke test ทุก market route
+3. เปรียบเทียบผล Vercel กับ Render ก่อนเลือกว่าจะให้ Vercel เป็น primary หรือใช้เป็น deployment สำรอง
 
 Vercel ใช้กับ Next.js app ปัจจุบันได้ ไม่จำเป็นต้องมี compatibility phase เพิ่ม; สิ่งสำคัญคือ env vars, domain, preview protection และ production smoke test
 
