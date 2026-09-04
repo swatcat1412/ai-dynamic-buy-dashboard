@@ -37,10 +37,7 @@ test("defines two distinct V2 portfolios without expanding live API coverage", (
     "GOOGL",
     "LLY",
     "JEPQ",
-    "TSM",
     "VRT",
-    "MSFT",
-    "PG",
     "RKLB",
   ]);
 });

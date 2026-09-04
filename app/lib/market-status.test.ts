@@ -40,13 +40,13 @@ test("reports the latest persistent cache timestamp instead of a fixed snapshot 
 
   assert.equal(payload.ok, true);
   assert.equal(payload.provider, "twelve-data / daily");
-  assert.deepEqual(payload.portfolioSymbols, ["GOOGL", "LLY", "JEPQ", "TSM", "VRT", "MSFT", "PG", "RKLB"]);
+  assert.deepEqual(payload.portfolioSymbols, ["GOOGL", "LLY", "JEPQ", "VRT", "RKLB"]);
   assert.equal(payload.marketCacheTtlMinutes, 30);
   assert.equal(payload.providerRequestLimitPerMinute, 8);
   assert.equal(payload.lastUpdated, latestUpdatedAt);
   assert.equal(payload.persistentCache.hasEntries, true);
   assert.equal(payload.persistentCache.freshCoverageCount, 1);
-  assert.equal(payload.persistentCache.expectedEntryCount, 8);
+  assert.equal(payload.persistentCache.expectedEntryCount, 5);
   assert.equal(payload.connectionState, "degraded");
   assert.equal(payload.liveDataAvailable, true);
   assert.equal(Number.isNaN(Date.parse(payload.generatedAt)), false);
