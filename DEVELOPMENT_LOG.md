@@ -478,6 +478,21 @@ Recheck ที่ต้องทำ:
 
 จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ OpenAI Codex | © 2026 Thiti Theadphitukphong · All Rights Reserved.
 
+### 2026-09-04 — V2 Phase 1 strategy foundation
+
+- สร้าง branch `v2-phase-1-foundation` จาก `origin/main` หลัง Squash Merge PR #14 ที่ commit `5143076`
+- กู้ขอบเขตจากบทสนทนาต้นทาง เนื่องจากไฟล์ V2 Upgrade Plan ไม่ได้ถูก sync เข้ามาใน checkout
+- เพิ่ม central model สำหรับ Port 1 Growth + Income และ Port 2 Dividend Growth + Defensive
+- เพิ่ม monthly policy 3 bullets: Starter 25%, Pullback 30%, Correction 45% และ carry unused reserve
+- เพิ่ม correction regime/multiplier ตั้งแต่ Normal 0.5× ถึง Panic 2×
+- คง live `portfolioSymbols` ไว้ 8 ตัวใน Phase นี้ เพื่อไม่เพิ่ม Twelve Data cold-refresh credits
+- ไม่แก้ Supabase schema/data และไม่เปลี่ยน Buy Engine recommendation เดิม
+- รายละเอียด assumption และ Phase 2 gate อยู่ใน `V2_PHASE_1_FOUNDATION.md`
+- Local quality gate ผ่าน: tests 28/28, lint, typecheck, production build และ `git diff --check`
+- Browser QA ผ่านทั้ง desktop และ mobile 390×844; section 2 Port/3 Bullets แสดงครบและไม่พบ console error
+
+จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ OpenAI Codex | © 2026 Thiti Theadphitukphong · All Rights Reserved.
+
 ### 2026-09-04 — V2 Phase 0.5 reliability hardening
 
 - ผู้ใช้ยืนยัน Phase 0 checks ผ่านและอนุญาตให้เดิน Phase ถัดไป จึงปิด reliability gate ก่อนแก้ V2 algorithm

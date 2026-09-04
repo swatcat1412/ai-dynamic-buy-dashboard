@@ -108,6 +108,29 @@ a { color: inherit; text-decoration: none; }
 .weight-cell small { color: #536159; font-size: 10px; }
 .foundation-note { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-top: 14px; padding: 15px 18px; border: 1px solid var(--line); border-radius: 12px; color: var(--accent); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; }
 .foundation-note p { margin: 0; color: var(--muted); font-size: 11px; letter-spacing: 0; line-height: 1.5; text-align: right; text-transform: none; }
+.v2-foundation { display: grid; gap: 14px; }
+.v2-portfolio-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.v2-portfolio-card, .monthly-policy-card { border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
+.v2-portfolio-card { padding: 24px; }
+.v2-portfolio-card:first-child { background: linear-gradient(145deg, #24352b, #17231e); }
+.v2-card-topline, .monthly-policy-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.v2-card-topline { color: var(--accent); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; }
+.v2-card-topline small { color: var(--muted); font-size: 9px; }
+.v2-portfolio-card h4, .monthly-policy-heading h4 { margin: 24px 0 8px; font-size: 21px; letter-spacing: -.04em; }
+.v2-portfolio-card p { max-width: 450px; margin: 0; color: var(--muted); font-size: 11px; line-height: 1.6; }
+.v2-symbol-list { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 22px; }
+.v2-symbol-list span { border: 1px solid var(--line); border-radius: 999px; padding: 6px 9px; color: var(--ink); font-size: 10px; }
+.monthly-policy-card { padding: 24px; }
+.monthly-policy-heading h4 { margin-top: 8px; }
+.monthly-policy-heading > strong { flex: 0 0 auto; border-radius: 999px; padding: 7px 10px; color: var(--accent-dark); background: var(--accent); font-size: 10px; }
+.monthly-bullet-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 22px; }
+.monthly-bullet { display: grid; grid-template-columns: auto 1fr auto; align-items: start; gap: 11px; min-height: 112px; padding: 15px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-raised); }
+.monthly-bullet .bullet-index { color: #65736b; font-size: 9px; }
+.monthly-bullet div { display: grid; gap: 7px; }
+.monthly-bullet strong { color: var(--ink); font-size: 12px; }
+.monthly-bullet small { color: var(--muted); font-size: 10px; line-height: 1.5; }
+.monthly-bullet b { color: var(--accent); font-size: 18px; letter-spacing: -.04em; }
+.monthly-policy-note { margin: 15px 0 0; color: var(--muted); font-size: 10px; line-height: 1.6; }
 .market-heading { margin-top: 68px; }
 .market-score-layout { display: grid; grid-template-columns: minmax(270px, 0.75fr) minmax(480px, 1.25fr); gap: 14px; }
 .market-score-card, .score-list, .macro-card { border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
@@ -281,6 +304,8 @@ a { color: inherit; text-decoration: none; }
   .hero-orbit { position: absolute; right: -42px; bottom: -70px; width: 190px; height: 190px; opacity: 0.8; }
   .section-heading { align-items: flex-start; flex-direction: column; margin-top: 42px; }
   .portfolio-layout { grid-template-columns: 1fr; }
+  .v2-portfolio-grid, .monthly-bullet-grid { grid-template-columns: 1fr; }
+  .monthly-policy-heading { flex-direction: column; }
   .portfolio-table { min-width: 0; }
   .portfolio-row { grid-template-columns: 0.7fr 1.2fr 0.55fr; padding: 0 16px; }
   .asset-name { font-size: 11px; }

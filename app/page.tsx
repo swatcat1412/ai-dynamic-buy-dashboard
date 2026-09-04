@@ -6,9 +6,11 @@ import LiveMacro from "./components/live-macro";
 import MarketNews from "./components/market-news";
 import LiveBuyZones from "./components/live-buy-zones";
 import PriceHistory from "./components/price-history";
+import V2StrategyFoundation from "./components/v2-strategy-foundation";
 
 const navigation = [
   { label: "Overview", href: "#overview" },
+  { label: "Monthly Plan", href: "#monthly-plan" },
   { label: "Market Score", href: "#market-score" },
   { label: "Buy Zones", href: "#buy-zones" },
   { label: "Indicators", href: "#technical-indicators" },
@@ -53,7 +55,7 @@ export default function Home() {
       <section className="content-area">
         <header className="topbar">
           <div>
-            <p className="eyebrow">AI Dynamic Buy Dashboard · v1.0</p>
+            <p className="eyebrow">AI Dynamic Buy Dashboard · V2 Foundation</p>
             <p className="muted">ระบบช่วยวิเคราะห์จังหวะทยอยสะสมหุ้นสหรัฐฯ</p>
           </div>
           <div className="date-chip">LIVE DAILY DATA</div>
@@ -75,6 +77,16 @@ export default function Home() {
             <span />
           </div>
         </div>
+
+        <div className="section-heading" id="monthly-plan">
+          <div>
+            <p className="section-kicker">V2 Phase 1 · Strategy foundation</p>
+            <h3>Two portfolios · Three bullets per month</h3>
+          </div>
+          <span className="pill">Correction multiplier · 0.5×–2×</span>
+        </div>
+
+        <V2StrategyFoundation />
 
         <div className="section-heading" id="portfolio">
           <div>
