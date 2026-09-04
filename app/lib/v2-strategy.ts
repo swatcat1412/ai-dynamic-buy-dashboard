@@ -56,6 +56,7 @@ export type MonthlyBulletPlan = {
   budgetShare: number;
   amount: number;
   purpose: string;
+  currency: "THB";
 };
 
 function normalizeBudget(budget: number) {
@@ -82,7 +83,7 @@ export function buildMonthlyBulletPlan(budget: number): MonthlyBulletPlan[] {
         ? Number((normalizedBudget - allocatedBefore).toFixed(2))
         : Number(((normalizedBudget * bullet.budgetShare) / 100).toFixed(2));
 
-    return { ...bullet, amount };
+    return { ...bullet, amount, currency: "THB" as const };
   });
 }
 

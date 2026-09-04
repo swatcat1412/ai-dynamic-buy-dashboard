@@ -2,6 +2,7 @@ import {
   monthlyPurchasePolicy,
   v2StrategyPortfolios,
 } from "../lib/v2-strategy";
+import ThbBudgetPlanner from "./thb-budget-planner";
 
 export default function V2StrategyFoundation() {
   return (
@@ -48,6 +49,7 @@ export default function V2StrategyFoundation() {
           เงินที่ยังไม่ถูกใช้จะคงเป็น Correction Reserve สำหรับเดือนถัดไป
           โดย Phase นี้ยังไม่บันทึกธุรกรรมและยังไม่เพิ่ม API calls สำหรับหุ้นใหม่
         </p>
+        <ThbBudgetPlanner />
       </article>
     </div>
   );

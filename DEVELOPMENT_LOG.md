@@ -478,6 +478,27 @@ Recheck ที่ต้องทำ:
 
 จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ OpenAI Codex | © 2026 Thiti Theadphitukphong · All Rights Reserved.
 
+### 2026-09-04 — V2 Phase 5 THB budget planner
+
+- เพิ่มช่องกรอกงบรายเดือนและแสดง 3 bullets เป็นเงินบาท (THB)
+- คงสัดส่วน Starter 25%, Pullback 30%, Correction 45%
+- ป้องกันยอดรวมคลาดเคลื่อนจากการปัดเศษ
+- ยังไม่คำนวณจำนวนหุ้น ไม่ส่งคำสั่งซื้อ และไม่บันทึกธุรกรรม
+- Local gate ผ่าน: tests 34/34, lint, typecheck และ production build
+
+จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ OpenAI Codex | © 2026 Thiti Theadphitukphong · All Rights Reserved.
+
+### 2026-09-04 — V2 Phase 4 stock opportunity scoring
+
+- แยก `stockScore` จาก `opportunityScore` เพื่อไม่ผูกคะแนนเข้ากับเงินลงทุน
+- เพิ่ม market context bonus สูงสุด 20 คะแนนจาก Nasdaq multiplier 0.5×–2×
+- รองรับหุ้น V2 ใหม่ใน Buy Engine และแสดง Stock Opportunity ในหน้าเดิม
+- หาก FRED ใช้งานไม่ได้ จะไม่ให้ bonus และไม่ทำให้ stock score จำลองขึ้นมา
+- เงินลงทุนยังไม่ถูกคำนวณ; Phase ถัดไปจะใช้หน่วยบาท (THB)
+- Local gate ผ่าน: tests 34/34, lint, typecheck และ production build
+
+จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ OpenAI Codex | © 2026 Thiti Theadphitukphong · All Rights Reserved.
+
 ### 2026-09-04 — V2 Phase 3 portfolio selector
 
 - แก้ active target portfolio ให้ตัด TSM/MSFT ออก และใช้ Port 1: JEPQ, GOOGL, LLY, RKLB, VRT
