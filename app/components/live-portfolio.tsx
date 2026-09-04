@@ -5,6 +5,7 @@ import {
   livePortfolios,
   type LivePortfolioId,
 } from "../lib/portfolio-config";
+import { usePortfolioSelection } from "./portfolio-selection";
 
 type Quote = {
   symbol: string;
@@ -14,7 +15,7 @@ type Quote = {
 };
 type HistoryBar = { time: string; close: number };
 export default function LivePortfolio() {
-  const [selectedPortfolio, setSelectedPortfolio] = useState<LivePortfolioId>("growth-income");
+  const { selectedPortfolio, setSelectedPortfolio } = usePortfolioSelection();
   const portfolio = livePortfolios.find((item) => item.id === selectedPortfolio) ?? livePortfolios[0];
   const assets = portfolio.assets;
   const [selectedSymbol, setSelectedSymbol] = useState<string>(assets[0].symbol);

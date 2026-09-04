@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { portfolioSymbols } from "../lib/portfolio-config";
+import { livePortfolios } from "../lib/portfolio-config";
+import { usePortfolioSelection } from "./portfolio-selection";
 
 type Zone = { zone: string; range: string; action: string; allocation: string };
 type Asset = {
@@ -20,13 +21,16 @@ const zoneTone = (zone: string) =>
         : "buy";
 
 export default function LiveBuyZones() {
+  const { selectedPortfolio } = usePortfolioSelection();
+  const portfolio = livePortfolios.find((item) => item.id === selectedPortfolio) ?? livePortfolios[0];
   const [assets, setAssets] = useState<Asset[]>([]);
   const [state, setState] = useState("loading");
   const [message, setMessage] = useState("");
   useEffect(() => {
     let cancelled = false;
     Promise.all(
-      portfolioSymbols.map(async (symbol) => {
+      portfolio.assets.map(async (asset) => {
+        const symbol = asset.symbol;
         const response = await fetch(
           `/api/market/buy-engine?symbol=${symbol}`,
           { cache: "no-store" },
@@ -61,7 +65,7 @@ export default function LiveBuyZones() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [portfolio.assets]);
   if (message) return <div className="indicator-message">{message}</div>;
   return (
     <div className="zone-grid">
