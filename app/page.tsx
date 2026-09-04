@@ -8,6 +8,7 @@ import LiveBuyZones from "./components/live-buy-zones";
 import PriceHistory from "./components/price-history";
 import V2StrategyFoundation from "./components/v2-strategy-foundation";
 import LiveMarketOpportunity from "./components/live-market-opportunity";
+import { PortfolioSelectionProvider } from "./components/portfolio-selection";
 
 const navigation = [
   { label: "Overview", href: "#overview" },
@@ -45,6 +46,7 @@ export default function Home() {
       </aside>
 
       <section className="content-area">
+        <PortfolioSelectionProvider>
         <header className="topbar">
           <div>
             <p className="eyebrow">AI Dynamic Buy Dashboard · V2 Foundation</p>
@@ -146,6 +148,7 @@ export default function Home() {
         <footer className="site-footer">
           <p>จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้เทคโนโลยี AI จาก OpenAI · © 2026 Thiti Theadphitukphong · All Rights Reserved.</p>
         </footer>
+        </PortfolioSelectionProvider>
 
       </section>
     </main>

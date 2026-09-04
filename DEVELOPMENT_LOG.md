@@ -478,6 +478,15 @@ Recheck ที่ต้องทำ:
 
 จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ OpenAI Codex | © 2026 Thiti Theadphitukphong · All Rights Reserved.
 
+### 2026-09-04 — V2 Phase 6 portfolio-aware buy zones
+
+- เพิ่ม shared Portfolio selection context ระหว่าง Portfolio overview และ Dynamic Buy Zones
+- เมื่อเลือก Port 2, Buy Zones จะโหลด DGRO, VIG, O, KO และ PG แทนชุด Port 1
+- จำกัดการเรียก Buy Engine ตามหุ้นของ Port ที่กำลังดู
+- Local gate ผ่าน: tests 34/34, lint, typecheck และ production build
+
+จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ OpenAI Codex | © 2026 Thiti Theadphitukphong · All Rights Reserved.
+
 ### 2026-09-04 — V2 Phase 5 THB budget planner
 
 - เพิ่มช่องกรอกงบรายเดือนและแสดง 3 bullets เป็นเงินบาท (THB)
