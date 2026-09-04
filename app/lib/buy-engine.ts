@@ -53,7 +53,10 @@ function formatRange(zone: ZoneDefinition) {
 
 function getDynamicLevels(price: number, indicators: IndicatorSnapshot) {
   const step = indicators.atr14 ?? price * 0.03;
-  const first = Math.min(price, indicators.ema20 ?? price);
+  const minimumStep = Math.max(step * 0.5, price * 0.01);
+  const first = indicators.ema20 !== null && indicators.ema20 < price
+    ? indicators.ema20
+    : price - minimumStep;
   const second = Math.min(first - Math.max(step * 0.5, price * 0.01), indicators.support20 ?? first - step);
   const third = Math.min(second - Math.max(step * 0.5, price * 0.01), indicators.support60 ?? second - step);
   return {

@@ -478,6 +478,15 @@ Recheck ที่ต้องทำ:
 
 จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ OpenAI Codex | © 2026 Thiti Theadphitukphong · All Rights Reserved.
 
+### 2026-09-04 — V2 Phase 8 Zone B range fix
+
+- แก้กรณี Zone B เป็นช่วงศูนย์เมื่อราคาอยู่ต่ำกว่า EMA20
+- กำหนดขอบล่างให้ต่ำกว่าราคาปัจจุบันอย่างน้อย 1% หรือครึ่ง ATR
+- เพิ่ม regression test ป้องกัน Zone B มี min เท่ากับ max
+- Local gate ผ่าน: tests 34/34, lint, typecheck และ production build
+
+จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ OpenAI Codex | © 2026 Thiti Theadphitukphong · All Rights Reserved.
+
 ### 2026-09-04 — V2 Phase 7 portfolio-aware analytics
 
 - เชื่อม Technical Indicators, Price History, Buy Engine และ Market News เข้ากับ shared Portfolio selection
