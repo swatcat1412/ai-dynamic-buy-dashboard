@@ -478,6 +478,17 @@ Recheck ที่ต้องทำ:
 
 จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ OpenAI Codex | © 2026 Thiti Theadphitukphong · All Rights Reserved.
 
+### 2026-09-04 — V2 Phase 3 portfolio selector
+
+- แก้ active target portfolio ให้ตัด TSM/MSFT ออก และใช้ Port 1: JEPQ, GOOGL, LLY, RKLB, VRT
+- เพิ่ม Port 2: DGRO, VIG, O, KO, PG พร้อม selector ที่เลือกใช้งานได้จริง
+- Live Portfolio โหลด quotes เฉพาะหุ้นของ Port ที่เลือก เพื่อลดการใช้ API quota
+- เพิ่ม validation ให้ history endpoint รองรับหุ้น V2 ใหม่
+- ใช้ allocation เริ่มต้น 20% ต่อหุ้นเพื่อรวม 100%; ต้องยืนยัน target weights ก่อนใช้จริง
+- Local gate ผ่าน: tests 31/31, lint, typecheck และ production build
+
+จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ OpenAI Codex | © 2026 Thiti Theadphitukphong · All Rights Reserved.
+
 ### 2026-09-04 — V2 Phase 1 strategy foundation
 
 - สร้าง branch `v2-phase-1-foundation` จาก `origin/main` หลัง Squash Merge PR #14 ที่ commit `5143076`

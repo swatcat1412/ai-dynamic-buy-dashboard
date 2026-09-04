@@ -7,7 +7,7 @@ import {
   recordMarketQuota,
   recordMarketSuccess,
 } from "./market-observability";
-export { portfolioSymbols } from "./portfolio-config";
+export { portfolioSymbols, allPortfolioSymbols } from "./portfolio-config";
 export type { PortfolioSymbol } from "./portfolio-config";
 
 export interface QuoteSnapshot {

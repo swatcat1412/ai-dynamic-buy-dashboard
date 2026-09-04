@@ -2,8 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import {
-  defaultPortfolioSymbol,
-  enabledPortfolioAssets,
+  livePortfolios,
+  type LivePortfolioId,
 } from "../lib/portfolio-config";
 
 type Quote = {
@@ -13,14 +13,14 @@ type Quote = {
   currency: string;
 };
 type HistoryBar = { time: string; close: number };
-const assets = enabledPortfolioAssets;
-
 export default function LivePortfolio() {
+  const [selectedPortfolio, setSelectedPortfolio] = useState<LivePortfolioId>("growth-income");
+  const portfolio = livePortfolios.find((item) => item.id === selectedPortfolio) ?? livePortfolios[0];
+  const assets = portfolio.assets;
+  const [selectedSymbol, setSelectedSymbol] = useState<string>(assets[0].symbol);
+  const activeSymbol = assets.some((asset) => asset.symbol === selectedSymbol) ? selectedSymbol : assets[0].symbol;
   const [quotes, setQuotes] = useState<Quote[]>([]);
   const [history, setHistory] = useState<HistoryBar[]>([]);
-  const [selectedSymbol, setSelectedSymbol] = useState<string>(
-    defaultPortfolioSymbol,
-  );
   const [state, setState] = useState("loading");
   const [message, setMessage] = useState("");
   const quoteMap = useMemo(
@@ -44,7 +44,7 @@ export default function LivePortfolio() {
           }
           return;
         }
-        const response = await fetch("/api/market/quotes", {
+        const response = await fetch(`/api/market/quotes?portfolioId=${selectedPortfolio}`, {
           cache: "no-store",
         });
         const payload = (await response.json()) as {
@@ -74,7 +74,7 @@ export default function LivePortfolio() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [selectedPortfolio]);
 
   useEffect(() => {
     let cancelled = false;
@@ -82,7 +82,7 @@ export default function LivePortfolio() {
       setHistory([]);
       try {
         const response = await fetch(
-          `/api/market/history?symbol=${selectedSymbol}`,
+          `/api/market/history?symbol=${activeSymbol}`,
           { cache: "no-store" },
         );
         const payload = (await response.json()) as {
@@ -99,7 +99,7 @@ export default function LivePortfolio() {
     return () => {
       cancelled = true;
     };
-  }, [selectedSymbol]);
+  }, [activeSymbol]);
 
   const stateLabel =
     state === "connected"
@@ -118,12 +118,16 @@ export default function LivePortfolio() {
           <i className="status-dot" />
           {stateLabel}
         </span>
-        <span className="muted">Daily closes · 30-minute API cache</span>
+        <label className="portfolio-selector">Portfolio
+          <select aria-label="Select portfolio" value={selectedPortfolio} onChange={(event) => setSelectedPortfolio(event.target.value as LivePortfolioId)}>
+            {livePortfolios.map((item) => <option key={item.id} value={item.id}>{item.label} · {item.name}</option>)}
+          </select>
+        </label>
       </div>
       <div className="portfolio-layout">
         <article className="portfolio-summary">
           <div className="summary-topline">
-            <span className="summary-label">Target allocation</span>
+            <span className="summary-label">{portfolio.label} · Target allocation</span>
             <span className="summary-status">
               <span className="status-dot" /> Balanced
             </span>
@@ -161,7 +165,7 @@ export default function LivePortfolio() {
               <span>Historical data</span>
               <select
                 aria-label="Select symbol history"
-                value={selectedSymbol}
+                value={activeSymbol}
                 onChange={(event) => setSelectedSymbol(event.target.value)}
               >
                 {assets.map((asset) => (
@@ -189,7 +193,7 @@ export default function LivePortfolio() {
           <div className="portfolio-row portfolio-header" role="row">
             <span>Symbol</span>
             <span>Asset / Daily price</span>
-            <span>Weight</span>
+            <span>Target weight</span>
           </div>
           {assets.map((asset, index) => {
             const quote = quoteMap.get(asset.symbol);

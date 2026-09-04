@@ -74,6 +74,8 @@ a { color: inherit; text-decoration: none; }
 .foundation-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
 .portfolio-layout { display: grid; grid-template-columns: minmax(280px, 0.9fr) minmax(420px, 1.1fr); gap: 14px; }
 .portfolio-live-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin: -4px 0 12px; }
+.portfolio-selector { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: .08em; }
+.portfolio-selector select { min-width: 220px; }
 .live-state { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 11px; }
 .live-state.connected { color: var(--accent); }
 .live-state.error { color: #f08c7c; }

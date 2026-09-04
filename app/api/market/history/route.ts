@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createMarketDataProvider, MarketDataError, portfolioSymbols, type PortfolioSymbol } from "../../../lib/market-data";
+import { createMarketDataProvider, MarketDataError, allPortfolioSymbols, type PortfolioSymbol } from "../../../lib/market-data";
 
 function isPortfolioSymbol(value: string): value is PortfolioSymbol {
-  return (portfolioSymbols as readonly string[]).includes(value);
+  return (allPortfolioSymbols as readonly string[]).includes(value);
 }
 
 export async function GET(request: NextRequest) {
