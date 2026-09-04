@@ -15,10 +15,9 @@ type Quote = {
 };
 type HistoryBar = { time: string; close: number };
 export default function LivePortfolio() {
-  const { selectedPortfolio, setSelectedPortfolio } = usePortfolioSelection();
+  const { selectedPortfolio, setSelectedPortfolio, selectedSymbol, setSelectedSymbol } = usePortfolioSelection();
   const portfolio = livePortfolios.find((item) => item.id === selectedPortfolio) ?? livePortfolios[0];
   const assets = portfolio.assets;
-  const [selectedSymbol, setSelectedSymbol] = useState<string>(assets[0].symbol);
   const activeSymbol = assets.some((asset) => asset.symbol === selectedSymbol) ? selectedSymbol : assets[0].symbol;
   const [quotes, setQuotes] = useState<Quote[]>([]);
   const [history, setHistory] = useState<HistoryBar[]>([]);

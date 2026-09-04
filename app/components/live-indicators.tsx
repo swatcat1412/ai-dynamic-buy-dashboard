@@ -32,7 +32,7 @@ const format = (value: number | null, digits = 2) =>
 export default function LiveIndicators() {
   const { selectedPortfolio } = usePortfolioSelection();
   const portfolio = livePortfolios.find((item) => item.id === selectedPortfolio) ?? livePortfolios[0];
-  const [symbol, setSymbol] = useState<string>(portfolio.assets[0].symbol);
+  const { selectedSymbol: symbol, setSelectedSymbol: setSymbol } = usePortfolioSelection();
   const activeSymbol = portfolio.assets.some((asset) => asset.symbol === symbol) ? symbol : portfolio.assets[0].symbol;
   const [data, setData] = useState<Indicators | null>(null);
   const [state, setState] = useState("loading");

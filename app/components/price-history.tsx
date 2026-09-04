@@ -26,7 +26,7 @@ function ema(values: number[], period: number) {
 export default function PriceHistory() {
   const { selectedPortfolio } = usePortfolioSelection();
   const portfolio = livePortfolios.find((item) => item.id === selectedPortfolio) ?? livePortfolios[0];
-  const [symbol, setSymbol] = useState<string>(portfolio.assets[0].symbol);
+  const { selectedSymbol: symbol, setSelectedSymbol: setSymbol } = usePortfolioSelection();
   const activeSymbol = portfolio.assets.some((asset) => asset.symbol === symbol) ? symbol : portfolio.assets[0].symbol;
   const [range, setRange] = useState("120");
   const [bars, setBars] = useState<Bar[]>([]);
