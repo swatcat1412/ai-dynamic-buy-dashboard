@@ -7,22 +7,14 @@ import MarketNews from "./components/market-news";
 import LiveBuyZones from "./components/live-buy-zones";
 import PriceHistory from "./components/price-history";
 import V2StrategyFoundation from "./components/v2-strategy-foundation";
+import LiveMarketOpportunity from "./components/live-market-opportunity";
 
 const navigation = [
   { label: "Overview", href: "#overview" },
   { label: "Monthly Plan", href: "#monthly-plan" },
-  { label: "Market Score", href: "#market-score" },
+  { label: "Market Opportunity", href: "#market-opportunity" },
   { label: "Buy Zones", href: "#buy-zones" },
   { label: "Indicators", href: "#technical-indicators" },
-];
-
-const marketScore = [
-  { label: "Fed", score: 62, status: "Supportive", tone: "positive" },
-  { label: "Inflation", score: 48, status: "Watching", tone: "caution" },
-  { label: "AI Trend", score: 86, status: "Strong", tone: "positive" },
-  { label: "VIX", score: 58, status: "Calm", tone: "neutral" },
-  { label: "Nasdaq", score: 74, status: "Healthy", tone: "positive" },
-  { label: "Bond Yield", score: 43, status: "Pressure", tone: "caution" },
 ];
 
 export default function Home() {
@@ -98,37 +90,15 @@ export default function Home() {
 
         <LivePortfolio />
 
-        <div className="section-heading market-heading" id="market-score">
+        <div className="section-heading market-heading" id="market-opportunity">
           <div>
-            <p className="section-kicker">Phase 3 · Market context</p>
-            <h3>Market score</h3>
+            <p className="section-kicker">V2 Phase 2 · Market context</p>
+            <h3>Market opportunity</h3>
           </div>
-          <span className="pill">Simulated snapshot</span>
+          <span className="pill">FRED · Nasdaq Composite daily</span>
         </div>
 
-        <div className="market-score-layout">
-          <article className="market-score-card">
-            <div className="score-card-header">
-              <span>Composite score</span>
-              <span className="score-date">MODEL</span>
-            </div>
-            <div className="composite-score">64<span>/100</span></div>
-            <p>ภาพรวมตลาดอยู่ในโหมดสะสมแบบเลือกจังหวะ โดย AI Trend และ Nasdaq ช่วยพยุง sentiment</p>
-            <div className="score-meter"><span style={{ width: "64%" }} /></div>
-            <div className="meter-labels"><span>Risk-off</span><span>Balanced</span><span>Risk-on</span></div>
-          </article>
-
-          <div className="score-list" role="list" aria-label="Market score indicators">
-            {marketScore.map((item) => (
-              <div className="score-row" role="listitem" key={item.label}>
-                <span className="score-label">{item.label}</span>
-                <span className="score-bar"><i className={item.tone} style={{ width: `${item.score}%` }} /></span>
-                <strong>{item.score}</strong>
-                <span className={`score-status ${item.tone}`}>{item.status}</span>
-              </div>
-            ))}
-          </div>
-        </div>
+        <LiveMarketOpportunity />
 
         <div className="section-heading macro-heading" id="macro-indicators">
           <div>
