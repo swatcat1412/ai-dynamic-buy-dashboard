@@ -462,3 +462,18 @@ Recheck ที่ต้องทำ:
 - เพิ่ม `PROJECT_HANDOFF.md` สำหรับย้ายงานไปเครื่องอื่น โดยระบุสถานะ Phase, production acceptance, PowerShell commands และ secret boundary
 - ปรับชื่อ CI job ให้ตรงกับ required check ที่ Ruleset บันทึกได้ (`typecheck, and build`) โดยยังคงรัน tests, lint, typecheck และ build ครบใน job เดียว
 - หลังเปิด Ruleset แล้วต้องตรวจ fresh PR validation run บน commit ล่าสุดก่อน merge เพื่อยืนยันว่า enforcement ทำงานจริง
+
+### 2026-09-04 — V2 Phase 0 audit
+
+- สร้าง local branch `v2-phase-0-audit` จาก `origin/main` ล่าสุด `0412482`; ยังไม่ push และไม่แก้ production
+- ตรวจ repository/data flow: Twelve Data daily 260 bars → in-memory dedupe → Supabase persistent cache → quotes/history/indicators/buy-engine
+- Production smoke ผ่าน: status, quotes 8 symbols, RKLB history 260 bars, indicators และ buy-engine ได้ HTTP 200
+- ยืนยัน Supabase cache `configured/reachable/hasEntries=true` โดยไม่อ่านหรือเปิดเผย secret
+- พบว่า `Daily data Not connected` เป็น status model ที่คลุมเครือ: UI ผูกกับการมี key และกลืน status fetch error จึงแยก configured/reachable/fresh/error ไม่ได้
+- พบ cold-cache latency: quotes ประมาณ 61.5 วินาที เพราะ portfolio มี 8 symbols แต่ limiter รับ 7 requests ต่อ 60 วินาที
+- Source gate ผ่าน: tests 15/15, lint, typecheck, production build และ `git diff --check`
+- ยังยืนยัน Render Dashboard config/actual quota telemetry ไม่ได้ เพราะไม่มี authenticated browser session; production ปัจจุบันไม่ได้ outage
+- รายละเอียด findings, risks, PowerShell checks และ gate ก่อน Phase 1 อยู่ใน `PHASE_0_V2_AUDIT.md`
+- สถานะ: Phase 0 ผ่านบางส่วน; หยุดก่อน Phase 1 จนกว่าจะอนุมัติแก้ health signal, cold-cache flow, quota observability และ resilience
+
+จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ OpenAI Codex | © 2026 Thiti Theadphitukphong · All Rights Reserved.
