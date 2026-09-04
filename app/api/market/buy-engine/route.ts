@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { calculateBuyEngine } from "../../../lib/buy-engine";
 import { calculateIndicators } from "../../../lib/indicators";
-import { getMacroSnapshots } from "../../../lib/macro-data";
-import { createMarketDataProvider, MarketDataError, portfolioSymbols, type PortfolioSymbol } from "../../../lib/market-data";
+import { getMacroSeriesHistory, getMacroSnapshots } from "../../../lib/macro-data";
+import { createMarketDataProvider, MarketDataError, allPortfolioSymbols, type PortfolioSymbol } from "../../../lib/market-data";
+import { calculateMarketOpportunity } from "../../../lib/market-opportunity";
+import { calculateStockOpportunity } from "../../../lib/stock-opportunity";
 
 function isPortfolioSymbol(value: string): value is PortfolioSymbol {
-  return (portfolioSymbols as readonly string[]).includes(value);
+  return (allPortfolioSymbols as readonly string[]).includes(value);
 }
 
 export async function GET(request: NextRequest) {
@@ -14,13 +16,24 @@ export async function GET(request: NextRequest) {
 
   try {
     const provider = createMarketDataProvider();
-    const [bars, macro] = await Promise.all([provider.getHistory(symbol, 260), getMacroSnapshots()]);
+    const [bars, macro, marketHistory] = await Promise.all([
+      provider.getHistory(symbol, 260),
+      getMacroSnapshots(),
+      getMacroSeriesHistory("nasdaq", 120).catch(() => null),
+    ]);
     const latest = bars.at(-1);
     if (!latest || bars.length < 30) return NextResponse.json({ ok: false, error: "Not enough market data for buy engine" }, { status: 422 });
 
+    const market = marketHistory ? calculateMarketOpportunity(marketHistory) : null;
+    const engine = calculateBuyEngine(symbol, latest.close, calculateIndicators(symbol, bars), macro);
+    const stockOpportunity = calculateStockOpportunity({
+      stockScore: engine.score,
+      marketMultiplier: market?.multiplier ?? null,
+    });
+
     return NextResponse.json({
       ok: true,
-      engine: calculateBuyEngine(symbol, latest.close, calculateIndicators(symbol, bars), macro),
+      engine: { ...engine, stockOpportunity, marketOpportunity: market },
     });
   } catch (error) {
     const status = error instanceof MarketDataError ? error.status : 502;
