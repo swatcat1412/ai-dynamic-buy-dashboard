@@ -478,6 +478,15 @@ Recheck ที่ต้องทำ:
 
 จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ OpenAI Codex | © 2026 Thiti Theadphitukphong · All Rights Reserved.
 
+### 2026-09-04 — V2 Phase 9 production acceptance
+
+- สร้าง acceptance checklist หลัง Merge Phase 8
+- ยืนยัน Vercel status ของ main commit ล่าสุดเป็น success
+- ยืนยัน local tests 34/34, lint, typecheck และ production build ผ่าน
+- เหลือ manual production checks: สลับ Port, Zone B, THB planner, Port 2 API และยืนยัน weights จริง
+
+จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ OpenAI Codex | © 2026 Thiti Theadphitukphong · All Rights Reserved.
+
 ### 2026-09-04 — V2 Phase 8 Zone B range fix
 
 - แก้กรณี Zone B เป็นช่วงศูนย์เมื่อราคาอยู่ต่ำกว่า EMA20
