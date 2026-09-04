@@ -493,6 +493,20 @@ Recheck ที่ต้องทำ:
 
 จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ OpenAI Codex | © 2026 Thiti Theadphitukphong · All Rights Reserved.
 
+### 2026-09-04 — V2 Phase 2 market opportunity
+
+- Squash Merge PR #15 เข้า `main` ที่ commit `1c70320`; post-merge Quality Gate และ Vercel ผ่าน
+- สร้าง branch `v2-phase-2-market-opportunity` จาก `origin/main` ล่าสุด
+- เปลี่ยน Market Score จำลองเป็น Nasdaq Market Opportunity จาก FRED `NASDAQCOM`
+- คำนวณ drawdown จาก recent high 20/60/120 sessions และ map เป็น Correction Multiplier 0.5×–2×
+- ใช้ FRED เพื่อไม่เพิ่ม Twelve Data credits และไม่เพิ่ม symbols ใน cold portfolio refresh
+- fail closed เมื่อไม่มี FRED key/ข้อมูลไม่พอ; ไม่ fallback เป็น score จำลอง
+- ไม่เปลี่ยน Supabase schema/data, Buy Engine หรือ transaction state
+- Local gate ผ่าน: tests 31/31, lint, typecheck, production build และ no-secret endpoint contract
+- Browser QA ผ่านบน desktop/mobile error state โดยไม่มี console error; live success state ต้องตรวจบน Preview ที่มี FRED environment
+
+จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ OpenAI Codex | © 2026 Thiti Theadphitukphong · All Rights Reserved.
+
 ### 2026-09-04 — V2 Phase 0.5 reliability hardening
 
 - ผู้ใช้ยืนยัน Phase 0 checks ผ่านและอนุญาตให้เดิน Phase ถัดไป จึงปิด reliability gate ก่อนแก้ V2 algorithm

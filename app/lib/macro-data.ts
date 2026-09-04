@@ -15,21 +15,25 @@ export type MacroSnapshot = { key: MacroKey; label: string; seriesId: string; un
 
 type FredObservation = { date: string; value: string };
 type FredResponse = { observations?: FredObservation[]; error_code?: string; error_message?: string };
+export type MacroHistoryPoint = { date: string; value: number };
 
 export class MacroDataError extends Error {
   constructor(message: string, public readonly status = 502) { super(message); this.name = "MacroDataError"; }
 }
 
-async function fetchSeries(seriesId: string) {
+async function fetchSeries(seriesId: string, limit = 2) {
   const apiKey = process.env.FRED_API_KEY;
   if (!apiKey) throw new MacroDataError("FRED_API_KEY is not configured", 503);
   const url = new URL("https://api.stlouisfed.org/fred/series/observations");
   url.searchParams.set("series_id", seriesId);
   url.searchParams.set("api_key", apiKey);
   url.searchParams.set("file_type", "json");
-  url.searchParams.set("limit", "2");
+  url.searchParams.set("limit", String(limit));
   url.searchParams.set("sort_order", "desc");
-  const response = await fetch(url, { next: { revalidate: 900 } });
+  const response = await fetch(url, {
+    next: { revalidate: 900 },
+    signal: AbortSignal.timeout(10_000),
+  });
   const payload = await response.json() as FredResponse;
   if (!response.ok || payload.error_code || !payload.observations) throw new MacroDataError(payload.error_message || `FRED request failed (${response.status})`, response.status);
   const observations = payload.observations.map((observation) => ({ ...observation, numericValue: Number(observation.value) })).filter((observation) => Number.isFinite(observation.numericValue));
@@ -53,6 +57,24 @@ async function buildSnapshot(key: MacroKey): Promise<MacroSnapshot> {
 export async function getMacroSnapshots() {
   const keys = Object.keys(macroSeries) as MacroKey[];
   return Promise.all(keys.map(buildSnapshot));
+}
+
+export async function getMacroSeriesHistory(
+  key: MacroKey,
+  requestedPoints = 120,
+): Promise<MacroHistoryPoint[]> {
+  if (!Number.isInteger(requestedPoints) || requestedPoints < 2 || requestedPoints > 260) {
+    throw new RangeError("Macro history points must be an integer from 2 to 260");
+  }
+
+  const definition = macroSeries[key];
+  const requestLimit = Math.min(Math.ceil(requestedPoints * 1.5), 1_000);
+  const observations = await fetchSeries(definition.seriesId, requestLimit);
+
+  return observations.slice(0, requestedPoints).map((observation) => ({
+    date: observation.date,
+    value: observation.numericValue,
+  }));
 }
 
 // จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้เทคโนโลยี AI จาก OpenAI · © 2026 Thiti Theadphitukphong · All Rights Reserved.

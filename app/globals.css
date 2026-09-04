@@ -133,6 +133,23 @@ a { color: inherit; text-decoration: none; }
 .monthly-policy-note { margin: 15px 0 0; color: var(--muted); font-size: 10px; line-height: 1.6; }
 .market-heading { margin-top: 68px; }
 .market-score-layout { display: grid; grid-template-columns: minmax(270px, 0.75fr) minmax(480px, 1.25fr); gap: 14px; }
+.market-opportunity-layout { display: grid; grid-template-columns: minmax(280px, .9fr) minmax(420px, 1.1fr); gap: 14px; }
+.market-opportunity-card, .drawdown-card, .market-opportunity-empty { border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
+.market-opportunity-card { padding: 26px; background: linear-gradient(145deg, #24352b, #17231e); }
+.market-opportunity-card.correction, .market-opportunity-card.major-correction, .market-opportunity-card.panic { border-color: rgba(182, 227, 109, .38); }
+.market-multiplier { margin-top: 36px; color: var(--accent); font-size: clamp(64px, 8vw, 92px); font-weight: 700; letter-spacing: -.09em; line-height: .85; }
+.market-opportunity-card p { margin: 25px 0 20px; color: var(--muted); font-size: 11px; line-height: 1.65; }
+.market-opportunity-card p strong { color: var(--ink); }
+.market-opportunity-meta { display: grid; grid-template-columns: auto 1fr; gap: 7px 15px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 10px; }
+.market-opportunity-meta span { color: var(--muted); }
+.market-opportunity-meta strong { text-align: right; }
+.drawdown-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.drawdown-card { display: flex; min-height: 100%; flex-direction: column; padding: 18px; }
+.drawdown-card span { color: var(--muted); font-size: 10px; line-height: 1.45; }
+.drawdown-card strong { margin-top: auto; padding-top: 36px; color: var(--accent); font-size: 26px; letter-spacing: -.05em; }
+.drawdown-card small { margin-top: 6px; color: #65736b; font-size: 9px; }
+.market-opportunity-empty { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 22px; }
+.market-opportunity-empty p { margin: 0; color: var(--muted); font-size: 11px; }
 .market-score-card, .score-list, .macro-card { border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
 .market-score-card { padding: 26px; background: linear-gradient(145deg, #24352b, #17231e); }
 .score-card-header, .meter-labels, .macro-card-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
@@ -312,6 +329,10 @@ a { color: inherit; text-decoration: none; }
   .foundation-note { align-items: flex-start; flex-direction: column; }
   .foundation-note p { text-align: left; }
   .market-score-layout { grid-template-columns: 1fr; }
+  .market-opportunity-layout { grid-template-columns: 1fr; }
+  .drawdown-grid { grid-template-columns: 1fr; }
+  .drawdown-card { min-height: 118px; }
+  .market-opportunity-empty { align-items: flex-start; flex-direction: column; }
   .score-list { padding: 7px 14px; }
   .score-row { grid-template-columns: 72px minmax(60px, 1fr) 25px 68px; gap: 8px; }
   .macro-grid { grid-template-columns: repeat(2, 1fr); }
