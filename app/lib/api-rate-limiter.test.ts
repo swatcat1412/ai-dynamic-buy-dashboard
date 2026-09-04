@@ -1,6 +1,13 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { createSlidingWindowRateLimiter } from "./api-rate-limiter.ts";
+import {
+  createSlidingWindowRateLimiter,
+  TWELVE_DATA_REQUESTS_PER_MINUTE,
+} from "./api-rate-limiter.ts";
+
+test("aligns one cold portfolio refresh with the eight-credit Basic limit", () => {
+  assert.equal(TWELVE_DATA_REQUESTS_PER_MINUTE, 8);
+});
 
 test("admits only the configured number of requests per rolling window", async () => {
   let currentTime = 0;

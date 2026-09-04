@@ -477,3 +477,19 @@ Recheck ที่ต้องทำ:
 - สถานะ: Phase 0 ผ่านบางส่วน; หยุดก่อน Phase 1 จนกว่าจะอนุมัติแก้ health signal, cold-cache flow, quota observability และ resilience
 
 จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ OpenAI Codex | © 2026 Thiti Theadphitukphong · All Rights Reserved.
+
+### 2026-09-04 — V2 Phase 0.5 reliability hardening
+
+- ผู้ใช้ยืนยัน Phase 0 checks ผ่านและอนุญาตให้เดิน Phase ถัดไป จึงปิด reliability gate ก่อนแก้ V2 algorithm
+- แยก market connection state เป็น configured/connected/degraded/unconfigured และ client checking/error
+- แก้ Data Status ให้ตรวจ HTTP error, timeout 10 วินาที, retry และ refresh ทุก 60 วินาที; ลบพฤติกรรมกลืน error แล้วค้าง `Not connected`
+- เพิ่ม Supabase cache freshness/coverage health โดยไม่เปลี่ยน schema หรือ RLS
+- เพิ่ม Twelve Data quota observability จาก response headers โดยไม่เปิดเผย key
+- ปรับ limiter เป็น server config `TWELVE_DATA_REQUESTS_PER_MINUTE` ค่าเริ่มต้น 8 ให้ตรงกับ portfolio 8 symbols และ Basic quota ปัจจุบัน
+- เพิ่ม upstream timeout, bounded retry และ stale-if-error fallback; จำกัด stale data ไม่เกิน 7 วันเพื่อไม่ให้ Buy Engine ใช้ข้อมูลเก่าเกินควร
+- Local no-secret API smoke: status=`unconfigured`, coverage=0/8, quotes=503 ตาม contract
+- Local browser smoke: แสดง `Not configured`, `0/8 fresh` และไม่มี console error
+- Quality gate ผ่าน: tests 24/24, lint, typecheck, build และ `git diff --check`
+- สถานะ: ผ่าน local gate; ยังไม่ push/merge/deploy และต้องทำ production acceptance หลัง deployment
+
+จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ OpenAI Codex | © 2026 Thiti Theadphitukphong · All Rights Reserved.

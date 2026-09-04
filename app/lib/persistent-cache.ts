@@ -17,11 +17,23 @@ export type PersistentCacheHit<T> = {
   expiresAt: number;
 };
 
+export type PersistentCacheEntry<T> = PersistentCacheHit<T> & {
+  updatedAt: string | null;
+  isExpired: boolean;
+};
+
 export type PersistentCacheHealth = {
   configured: boolean;
   reachable: boolean;
   hasEntries: boolean;
   latestUpdatedAt: string | null;
+  latestExpiresAt: string | null;
+  entryCount: number;
+  expectedEntryCount: number;
+  freshEntryCount: number;
+  staleEntryCount: number;
+  freshCoverageCount: number;
+  missingEntryCount: number;
 };
 
 function getConfig(): PersistentCacheConfig | null {
@@ -54,12 +66,20 @@ function headers(config: PersistentCacheConfig): Record<string, string> {
 export async function getPersistentCache<T>(
   cacheKey: string,
 ): Promise<PersistentCacheHit<T> | null> {
+  const entry = await getPersistentCacheEntry<T>(cacheKey);
+  if (!entry || entry.isExpired) return null;
+  return { value: entry.value, expiresAt: entry.expiresAt };
+}
+
+export async function getPersistentCacheEntry<T>(
+  cacheKey: string,
+): Promise<PersistentCacheEntry<T> | null> {
   const config = getConfig();
   if (!config) return null;
 
   const url = new URL(`/rest/v1/${table}`, config.url);
   url.searchParams.set("cache_key", `eq.${cacheKey}`);
-  url.searchParams.set("select", "cache_key,payload,expires_at");
+  url.searchParams.set("select", "cache_key,payload,expires_at,updated_at");
   url.searchParams.set("limit", "1");
 
   try {
@@ -71,9 +91,13 @@ export async function getPersistentCache<T>(
     const rows = (await response.json()) as Array<CacheRecord<T>>;
     const row = rows[0];
     const expiresAt = row ? Date.parse(row.expires_at) : Number.NaN;
-    if (!row || !Number.isFinite(expiresAt) || expiresAt <= Date.now())
-      return null;
-    return { value: row.payload, expiresAt };
+    if (!row || !Number.isFinite(expiresAt)) return null;
+    return {
+      value: row.payload,
+      expiresAt,
+      updatedAt: row.updated_at ?? null,
+      isExpired: expiresAt <= Date.now(),
+    };
   } catch {
     return null;
   }
@@ -114,20 +138,40 @@ export async function setPersistentCache<T>(
   }
 }
 
-export async function getPersistentCacheHealth(): Promise<PersistentCacheHealth> {
+function emptyHealth(
+  configured: boolean,
+  reachable: boolean,
+): PersistentCacheHealth {
+  return {
+    configured,
+    reachable,
+    hasEntries: false,
+    latestUpdatedAt: null,
+    latestExpiresAt: null,
+    entryCount: 0,
+    expectedEntryCount: 0,
+    freshEntryCount: 0,
+    staleEntryCount: 0,
+    freshCoverageCount: 0,
+    missingEntryCount: 0,
+  };
+}
+
+export async function getPersistentCacheHealth(
+  expectedCacheKeys: readonly string[] = [],
+): Promise<PersistentCacheHealth> {
   const config = getConfig();
   if (!config)
     return {
-      configured: false,
-      reachable: false,
-      hasEntries: false,
-      latestUpdatedAt: null,
+      ...emptyHealth(false, false),
+      expectedEntryCount: expectedCacheKeys.length,
+      missingEntryCount: expectedCacheKeys.length,
     };
 
   const url = new URL(`/rest/v1/${table}`, config.url);
-  url.searchParams.set("select", "updated_at");
+  url.searchParams.set("select", "cache_key,expires_at,updated_at");
   url.searchParams.set("order", "updated_at.desc");
-  url.searchParams.set("limit", "1");
+  url.searchParams.set("limit", "100");
 
   try {
     const response = await fetch(url, {
@@ -136,26 +180,44 @@ export async function getPersistentCacheHealth(): Promise<PersistentCacheHealth>
     });
     if (!response.ok)
       return {
-        configured: true,
-        reachable: false,
-        hasEntries: false,
-        latestUpdatedAt: null,
+        ...emptyHealth(true, false),
+        expectedEntryCount: expectedCacheKeys.length,
+        missingEntryCount: expectedCacheKeys.length,
       };
     const rows = (await response.json()) as Array<
-      Pick<CacheRecord<unknown>, "updated_at">
+      Pick<CacheRecord<unknown>, "cache_key" | "expires_at" | "updated_at">
     >;
+    const now = Date.now();
+    const freshRows = rows.filter((row) => {
+      const expiresAt = Date.parse(row.expires_at);
+      return Number.isFinite(expiresAt) && expiresAt > now;
+    });
+    const freshKeys = new Set(freshRows.map((row) => row.cache_key));
+    const freshCoverageCount = expectedCacheKeys.filter((key) =>
+      freshKeys.has(key),
+    ).length;
+    const latestExpiresAt = rows
+      .map((row) => row.expires_at)
+      .filter((value) => Number.isFinite(Date.parse(value)))
+      .sort((a, b) => Date.parse(b) - Date.parse(a))[0] ?? null;
     return {
       configured: true,
       reachable: true,
       hasEntries: rows.length > 0,
       latestUpdatedAt: rows[0]?.updated_at ?? null,
+      latestExpiresAt,
+      entryCount: rows.length,
+      expectedEntryCount: expectedCacheKeys.length,
+      freshEntryCount: freshRows.length,
+      staleEntryCount: rows.length - freshRows.length,
+      freshCoverageCount,
+      missingEntryCount: Math.max(0, expectedCacheKeys.length - freshCoverageCount),
     };
   } catch {
     return {
-      configured: true,
-      reachable: false,
-      hasEntries: false,
-      latestUpdatedAt: null,
+      ...emptyHealth(true, false),
+      expectedEntryCount: expectedCacheKeys.length,
+      missingEntryCount: expectedCacheKeys.length,
     };
   }
 }

@@ -181,6 +181,21 @@ $response.Content
 
 ให้เก็บเฉพาะ HTTP status/error message และ timestamp; ห้ามคัดลอก API key หรือ secret ออกจาก Render/Supabase
 
+## Phase 0.5 implementation update — 4 กันยายน 2026
+
+สถานะ: **ผ่าน local gate; ยังไม่ push/deploy production**
+
+- เปลี่ยน status contract ให้แยก `configured`, `connected`, `degraded`, `unconfigured` และ client-side `checking/error`
+- UI ตรวจ HTTP status, timeout ที่ 10 วินาที, retry หลัง 5 วินาที และ refresh health ทุก 60 วินาที; ไม่ใช้ข้อความ `Not connected` ที่กำกวมแล้ว
+- เพิ่ม cache health coverage: จำนวน entries, fresh/stale, expected/missing symbols และเวลาหมดอายุล่าสุด
+- เพิ่ม safe runtime observability สำหรับ Twelve Data quota headers โดยไม่เปิดเผย API key
+- เปลี่ยน limiter จาก 7 เป็นค่า server config `TWELVE_DATA_REQUESTS_PER_MINUTE` ซึ่ง default 8 เพื่อให้ 8-symbol cold refresh ผ่านในนาทีเดียว
+- เพิ่ม upstream timeout 10 วินาที, retry จำกัดหนึ่งครั้งสำหรับ network/5xx และ stale-if-error fallback
+- stale market data ใช้ได้ไม่เกิน 7 วัน; เก่ากว่านั้นต้อง fail closed แทนการส่งข้อมูลเก่าเข้าสู่ Buy Engine
+- ไม่เปลี่ยน Supabase schema/RLS และยังคง `SUPABASE_SECRET_KEY` เฉพาะ server-side
+- Local verification: tests 24/24, lint, typecheck, production build, API smoke และ browser UI smoke ผ่าน
+- Production acceptance ที่ต้องตรวจหลัง merge/deploy: cold-cache quotes ไม่รอ ~60 วินาที, status coverage 8/8 หลัง warm, quota headers ปรากฏเมื่อ provider ส่งมา และ stale fallback แสดง `degraded`
+
 ## Sources
 
 - [Twelve Data — Credits](https://support.twelvedata.com/en/articles/5615854-credits)
