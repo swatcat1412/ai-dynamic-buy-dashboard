@@ -37,7 +37,8 @@ test("normalizes sub-cent prices before building and matching dynamic zones", ()
   );
 
   assert.equal(result.currentZone, "B");
-  assert.equal(result.zones[1].range, "144.68–144.68");
+  assert.equal(result.zones[1].range, "142.68–144.68");
+  assert.ok(result.zones[1].min! < result.zones[1].max!);
   assert.ok(boundedZones.every((zone) => zone.min! <= zone.max!));
 });
 
