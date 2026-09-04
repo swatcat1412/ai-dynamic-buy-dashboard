@@ -478,6 +478,15 @@ Recheck ที่ต้องทำ:
 
 จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ OpenAI Codex | © 2026 Thiti Theadphitukphong · All Rights Reserved.
 
+### 2026-09-04 — V2 Phase 7 portfolio-aware analytics
+
+- เชื่อม Technical Indicators, Price History, Buy Engine และ Market News เข้ากับ shared Portfolio selection
+- เมื่อเลือก Port 2 แผงวิเคราะห์จะใช้ DGRO, VIG, O, KO และ PG
+- แยก Market News cache ตามชุด Symbol เพื่อป้องกันข้อมูลจากอีก Port ปะปน
+- Local gate ผ่าน: tests 34/34, lint, typecheck และ production build
+
+จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ OpenAI Codex | © 2026 Thiti Theadphitukphong · All Rights Reserved.
+
 ### 2026-09-04 — V2 Phase 6 portfolio-aware buy zones
 
 - เพิ่ม shared Portfolio selection context ระหว่าง Portfolio overview และ Dynamic Buy Zones

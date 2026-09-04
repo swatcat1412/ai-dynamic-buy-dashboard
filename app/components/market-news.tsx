@@ -1,16 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePortfolioSelection } from "./portfolio-selection";
 
 type NewsItem = { title: string; url: string; source: string; publishedAt: string; sentiment: number | null; sentimentLabel: "Positive" | "Negative" | "Neutral"; symbols: string[] };
 
 export default function MarketNews() {
+  const { selectedPortfolio } = usePortfolioSelection();
   const [news, setNews] = useState<NewsItem[]>([]);
   const [state, setState] = useState("loading");
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    fetch("/api/market/news", { cache: "no-store" })
+    fetch(`/api/market/news?portfolioId=${selectedPortfolio}`, { cache: "no-store" })
       .then(async (response) => {
         const payload = await response.json() as { ok?: boolean; available?: boolean; news?: NewsItem[]; error?: string };
         if (!response.ok || !payload.ok) throw new Error(payload.error || "Market news request failed");
@@ -22,7 +24,7 @@ export default function MarketNews() {
         setState("error");
         setMessage(error instanceof Error ? error.message : "Market news unavailable");
       });
-  }, []);
+  }, [selectedPortfolio]);
 
   return <div className="news-panel">
     <div className="news-toolbar"><span className={`live-state ${state}`}><i className="status-dot" />{state === "connected" ? "News feed cached" : state === "loading" ? "Loading market news" : "News unavailable"}</span><span className="muted">Sentiment is a supporting signal, not a trading decision.</span></div>

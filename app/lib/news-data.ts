@@ -14,7 +14,7 @@ type MarketauxEntity = { symbol?: string; sentiment_score?: number };
 type MarketauxArticle = { title?: string; url?: string; source?: string; published_at?: string; entities?: MarketauxEntity[] };
 type MarketauxResponse = { data?: MarketauxArticle[]; error?: string; detail?: string };
 
-let cachedNews: { expiresAt: number; value: MarketNewsItem[] } | null = null;
+let cachedNews: { key: string; expiresAt: number; value: MarketNewsItem[] } | null = null;
 const CACHE_TTL_MS = 30 * 60 * 1000;
 
 function sentimentLabel(value: number | null): MarketNewsItem["sentimentLabel"] {
@@ -26,7 +26,8 @@ export async function getMarketNews(symbols: readonly PortfolioSymbol[] = portfo
   const token = process.env.MARKETAUX_API_TOKEN;
   if (!token) return [];
 
-  if (cachedNews && cachedNews.expiresAt > Date.now()) return cachedNews.value;
+  const cacheKey = [...symbols].sort().join(",");
+  if (cachedNews && cachedNews.key === cacheKey && cachedNews.expiresAt > Date.now()) return cachedNews.value;
 
   const url = new URL("https://api.marketaux.com/v1/news/all");
   url.searchParams.set("api_token", token);
@@ -52,7 +53,7 @@ export async function getMarketNews(symbols: readonly PortfolioSymbol[] = portfo
     };
   });
 
-  cachedNews = { expiresAt: Date.now() + CACHE_TTL_MS, value };
+  cachedNews = { key: cacheKey, expiresAt: Date.now() + CACHE_TTL_MS, value };
   return value;
 }
 
