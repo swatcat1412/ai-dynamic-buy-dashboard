@@ -9,7 +9,7 @@ type Engine = { symbol: string; price: number; currentZone: string; score: numbe
 export default function LiveBuyEngine() {
   const { selectedPortfolio } = usePortfolioSelection();
   const portfolio = livePortfolios.find((item) => item.id === selectedPortfolio) ?? livePortfolios[0];
-  const [symbol, setSymbol] = useState<string>(portfolio.assets[0].symbol);
+  const { selectedSymbol: symbol, setSelectedSymbol: setSymbol } = usePortfolioSelection();
   const activeSymbol = portfolio.assets.some((asset) => asset.symbol === symbol) ? symbol : portfolio.assets[0].symbol;
   const [engine, setEngine] = useState<Engine | null>(null);
   const [state, setState] = useState("loading");

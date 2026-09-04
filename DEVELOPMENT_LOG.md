@@ -478,6 +478,15 @@ Recheck ที่ต้องทำ:
 
 จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ OpenAI Codex | © 2026 Thiti Theadphitukphong · All Rights Reserved.
 
+### 2026-09-04 — V2 Phase 10 shared symbol selection
+
+- เพิ่ม selected symbol state ร่วมสำหรับ Technical Indicators, Buy Engine และ Price History
+- เลือกหุ้นจากกรอบใดกรอบหนึ่งแล้วอีกกรอบเปลี่ยนตามทันที
+- เปลี่ยน Port แล้ว reset เป็นหุ้นตัวแรกของ Port ใหม่
+- Local gate ผ่าน: tests 34/34, lint, typecheck และ production build
+
+จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ OpenAI Codex | © 2026 Thiti Theadphitukphong · All Rights Reserved.
+
 ### 2026-09-04 — V2 Phase 9 production acceptance
 
 - สร้าง acceptance checklist หลัง Merge Phase 8
