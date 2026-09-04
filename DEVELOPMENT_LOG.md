@@ -462,3 +462,34 @@ Recheck ที่ต้องทำ:
 - เพิ่ม `PROJECT_HANDOFF.md` สำหรับย้ายงานไปเครื่องอื่น โดยระบุสถานะ Phase, production acceptance, PowerShell commands และ secret boundary
 - ปรับชื่อ CI job ให้ตรงกับ required check ที่ Ruleset บันทึกได้ (`typecheck, and build`) โดยยังคงรัน tests, lint, typecheck และ build ครบใน job เดียว
 - หลังเปิด Ruleset แล้วต้องตรวจ fresh PR validation run บน commit ล่าสุดก่อน merge เพื่อยืนยันว่า enforcement ทำงานจริง
+
+### 2026-09-04 — V2 Phase 0 audit
+
+- สร้าง local branch `v2-phase-0-audit` จาก `origin/main` ล่าสุด `0412482`; ยังไม่ push และไม่แก้ production
+- ตรวจ repository/data flow: Twelve Data daily 260 bars → in-memory dedupe → Supabase persistent cache → quotes/history/indicators/buy-engine
+- Production smoke ผ่าน: status, quotes 8 symbols, RKLB history 260 bars, indicators และ buy-engine ได้ HTTP 200
+- ยืนยัน Supabase cache `configured/reachable/hasEntries=true` โดยไม่อ่านหรือเปิดเผย secret
+- พบว่า `Daily data Not connected` เป็น status model ที่คลุมเครือ: UI ผูกกับการมี key และกลืน status fetch error จึงแยก configured/reachable/fresh/error ไม่ได้
+- พบ cold-cache latency: quotes ประมาณ 61.5 วินาที เพราะ portfolio มี 8 symbols แต่ limiter รับ 7 requests ต่อ 60 วินาที
+- Source gate ผ่าน: tests 15/15, lint, typecheck, production build และ `git diff --check`
+- ยังยืนยัน Render Dashboard config/actual quota telemetry ไม่ได้ เพราะไม่มี authenticated browser session; production ปัจจุบันไม่ได้ outage
+- รายละเอียด findings, risks, PowerShell checks และ gate ก่อน Phase 1 อยู่ใน `PHASE_0_V2_AUDIT.md`
+- สถานะ: Phase 0 ผ่านบางส่วน; หยุดก่อน Phase 1 จนกว่าจะอนุมัติแก้ health signal, cold-cache flow, quota observability และ resilience
+
+จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ OpenAI Codex | © 2026 Thiti Theadphitukphong · All Rights Reserved.
+
+### 2026-09-04 — V2 Phase 0.5 reliability hardening
+
+- ผู้ใช้ยืนยัน Phase 0 checks ผ่านและอนุญาตให้เดิน Phase ถัดไป จึงปิด reliability gate ก่อนแก้ V2 algorithm
+- แยก market connection state เป็น configured/connected/degraded/unconfigured และ client checking/error
+- แก้ Data Status ให้ตรวจ HTTP error, timeout 10 วินาที, retry และ refresh ทุก 60 วินาที; ลบพฤติกรรมกลืน error แล้วค้าง `Not connected`
+- เพิ่ม Supabase cache freshness/coverage health โดยไม่เปลี่ยน schema หรือ RLS
+- เพิ่ม Twelve Data quota observability จาก response headers โดยไม่เปิดเผย key
+- ปรับ limiter เป็น server config `TWELVE_DATA_REQUESTS_PER_MINUTE` ค่าเริ่มต้น 8 ให้ตรงกับ portfolio 8 symbols และ Basic quota ปัจจุบัน
+- เพิ่ม upstream timeout, bounded retry และ stale-if-error fallback; จำกัด stale data ไม่เกิน 7 วันเพื่อไม่ให้ Buy Engine ใช้ข้อมูลเก่าเกินควร
+- Local no-secret API smoke: status=`unconfigured`, coverage=0/8, quotes=503 ตาม contract
+- Local browser smoke: แสดง `Not configured`, `0/8 fresh` และไม่มี console error
+- Quality gate ผ่าน: tests 24/24, lint, typecheck, build และ `git diff --check`
+- สถานะ: ผ่าน local gate; ยังไม่ push/merge/deploy และต้องทำ production acceptance หลัง deployment
+
+จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ OpenAI Codex | © 2026 Thiti Theadphitukphong · All Rights Reserved.

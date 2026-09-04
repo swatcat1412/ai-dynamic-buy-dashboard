@@ -42,11 +42,20 @@ export function createSlidingWindowRateLimiter(options: RateLimiterOptions) {
   };
 }
 
-// Render currently runs one web-service instance. This guard is process-local;
-// a shared/distributed limiter is required before scaling to multiple instances.
+// Each request made by this module is one /time_series request for one symbol
+// (one credit). Default to the current Basic limit while allowing a plan change
+// through server-only configuration. This remains process-local.
+const configuredRequestsPerMinute = Number(
+  process.env.TWELVE_DATA_REQUESTS_PER_MINUTE ?? "8",
+);
+export const TWELVE_DATA_REQUESTS_PER_MINUTE =
+  Number.isSafeInteger(configuredRequestsPerMinute) &&
+  configuredRequestsPerMinute > 0
+    ? configuredRequestsPerMinute
+    : 8;
 export const runWithTwelveDataRateLimit = createSlidingWindowRateLimiter({
   windowMs: 60_000,
-  maxRequests: 7,
+  maxRequests: TWELVE_DATA_REQUESTS_PER_MINUTE,
 });
 
 // จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้เทคโนโลยี AI จาก OpenAI · © 2026 Thiti Theadphitukphong · All Rights Reserved.
