@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import {
-  defaultPortfolioSymbol,
-  portfolioSymbols,
+  livePortfolios,
 } from "../lib/portfolio-config";
+import { usePortfolioSelection } from "./portfolio-selection";
 
 type Indicators = {
   symbol: string;
@@ -30,13 +30,16 @@ const format = (value: number | null, digits = 2) =>
   value === null ? "—" : value.toFixed(digits);
 
 export default function LiveIndicators() {
-  const [symbol, setSymbol] = useState<string>(defaultPortfolioSymbol);
+  const { selectedPortfolio } = usePortfolioSelection();
+  const portfolio = livePortfolios.find((item) => item.id === selectedPortfolio) ?? livePortfolios[0];
+  const [symbol, setSymbol] = useState<string>(portfolio.assets[0].symbol);
+  const activeSymbol = portfolio.assets.some((asset) => asset.symbol === symbol) ? symbol : portfolio.assets[0].symbol;
   const [data, setData] = useState<Indicators | null>(null);
   const [state, setState] = useState("loading");
   const [message, setMessage] = useState("");
   useEffect(() => {
     let cancelled = false;
-    fetch(`/api/market/indicators?symbol=${symbol}`, { cache: "no-store" })
+    fetch(`/api/market/indicators?symbol=${activeSymbol}`, { cache: "no-store" })
       .then(async (response) => {
         const payload = (await response.json()) as {
           ok?: boolean;
@@ -62,7 +65,7 @@ export default function LiveIndicators() {
     return () => {
       cancelled = true;
     };
-  }, [symbol]);
+  }, [activeSymbol]);
   const cards = data
     ? [
         {
@@ -152,15 +155,15 @@ export default function LiveIndicators() {
         </span>
         <select
           aria-label="Select symbol indicators"
-          value={symbol}
+          value={activeSymbol}
           onChange={(event) => {
             setState("loading");
             setMessage("");
             setSymbol(event.target.value);
           }}
         >
-          {portfolioSymbols.map((item) => (
-            <option key={item}>{item}</option>
+          {portfolio.assets.map((asset) => (
+            <option key={asset.symbol}>{asset.symbol}</option>
           ))}
         </select>
       </div>
@@ -170,7 +173,7 @@ export default function LiveIndicators() {
         <div
           className="technical-grid"
           role="list"
-          aria-label={`${symbol} technical indicators`}
+          aria-label={`${activeSymbol} technical indicators`}
         >
           {cards.map((item) => (
             <article

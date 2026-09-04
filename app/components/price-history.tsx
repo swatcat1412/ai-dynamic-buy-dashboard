@@ -2,9 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 import {
-  defaultPortfolioSymbol,
-  portfolioSymbols,
+  livePortfolios,
 } from "../lib/portfolio-config";
+import { usePortfolioSelection } from "./portfolio-selection";
 
 type Bar = { time: string; close: number };
 const formatPrice = (value: number) =>
@@ -24,14 +24,17 @@ function ema(values: number[], period: number) {
 }
 
 export default function PriceHistory() {
-  const [symbol, setSymbol] = useState<string>(defaultPortfolioSymbol);
+  const { selectedPortfolio } = usePortfolioSelection();
+  const portfolio = livePortfolios.find((item) => item.id === selectedPortfolio) ?? livePortfolios[0];
+  const [symbol, setSymbol] = useState<string>(portfolio.assets[0].symbol);
+  const activeSymbol = portfolio.assets.some((asset) => asset.symbol === symbol) ? symbol : portfolio.assets[0].symbol;
   const [range, setRange] = useState("120");
   const [bars, setBars] = useState<Bar[]>([]);
   const [state, setState] = useState("loading");
   const [message, setMessage] = useState("");
   useEffect(() => {
     let cancelled = false;
-    fetch(`/api/market/history?symbol=${symbol}&range=${range}`, {
+    fetch(`/api/market/history?symbol=${activeSymbol}&range=${range}`, {
       cache: "no-store",
     })
       .then(async (response) => {
@@ -59,7 +62,7 @@ export default function PriceHistory() {
     return () => {
       cancelled = true;
     };
-  }, [symbol, range]);
+  }, [activeSymbol, range]);
   const points = useMemo(() => {
     const width = 724,
       left = 56,
@@ -137,15 +140,15 @@ export default function PriceHistory() {
           <label>
             Symbol{" "}
             <select
-              value={symbol}
+              value={activeSymbol}
               onChange={(event) => {
                 setState("loading");
                 setMessage("");
                 setSymbol(event.target.value);
               }}
             >
-              {portfolioSymbols.map((item) => (
-                <option key={item}>{item}</option>
+              {portfolio.assets.map((asset) => (
+                <option key={asset.symbol}>{asset.symbol}</option>
               ))}
             </select>
           </label>
@@ -176,10 +179,10 @@ export default function PriceHistory() {
             className="history-chart"
             viewBox="0 0 800 240"
             role="img"
-            aria-label={`${symbol} closing price history with price scale`}
+            aria-label={`${activeSymbol} closing price history with price scale`}
             preserveAspectRatio="none"
           >
-            <title>{`${symbol} price history`}</title>
+            <title>{`${activeSymbol} price history`}</title>
             <desc>
               Closing price line with a 20-day exponential moving average and
               price labels.
