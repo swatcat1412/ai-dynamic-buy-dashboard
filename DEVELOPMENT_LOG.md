@@ -478,6 +478,16 @@ Recheck ที่ต้องทำ:
 
 จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ OpenAI Codex | © 2026 Thiti Theadphitukphong · All Rights Reserved.
 
+### 2026-09-05 — V2 revised phase plan: remove market news
+
+- ตัด Market News / Catalysts / Marketaux ออกจาก production scope ตามการตัดสินใจของผู้ใช้
+- ถอด News UI, API route, adapter และ CSS ที่ไม่ถูกใช้งานแล้ว
+- ปรับ roadmap ใหม่เป็น Phase 11 Readability, Phase 12 Data Reliability, Phase 13 Scoring Calibration, Phase 14 Monthly Decision Workflow และ Phase 15 Final Acceptance
+- คงขอบเขตหลักไว้ที่ราคา, macro, indicators, scoring, zones, portfolio และ THB planner
+- รายละเอียดแผนใหม่อยู่ใน `V2_PHASE_PLAN_REVISED.md`
+
+จัดทำโดย: นายฐิติ เทอดพิทักษ์พงษ์ โดยใช้ OpenAI Codex | © 2026 Thiti Theadphitukphong · All Rights Reserved.
+
 ### 2026-09-04 — V2 Phase 10 shared symbol selection
 
 - เพิ่ม selected symbol state ร่วมสำหรับ Technical Indicators, Buy Engine และ Price History
