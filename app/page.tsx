@@ -3,7 +3,6 @@ import LivePortfolio from "./components/live-portfolio";
 import LiveIndicators from "./components/live-indicators";
 import LiveBuyEngine from "./components/live-buy-engine";
 import LiveMacro from "./components/live-macro";
-import MarketNews from "./components/market-news";
 import LiveBuyZones from "./components/live-buy-zones";
 import PriceHistory from "./components/price-history";
 import V2StrategyFoundation from "./components/v2-strategy-foundation";
@@ -111,9 +110,6 @@ export default function Home() {
         </div>
 
         <LiveMacro />
-
-        <div className="section-heading news-heading" id="market-news"><div><p className="section-kicker">Phase 3 · News & catalysts</p><h3>Market news</h3></div><span className="pill">Cached sentiment</span></div>
-        <MarketNews />
 
         <div className="section-heading zone-heading" id="buy-zones">
           <div>
